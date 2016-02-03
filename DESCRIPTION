@@ -1,10 +1,13 @@
 Package: limmaDE2
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1
+Title: A pipeline for differential expression analyses in LIMMA
+Version: 1.0
 Date: 2016-02-03
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: John T. Lovell
+Maintainer: John T. Lovell <johntlovell@gmail.com>
+Description: A set of functions analyze and plot gene expression count data.
+License: NA
 LazyData: TRUE
+Depends:
+    limma
+RoxygenNote: 5.0.1
