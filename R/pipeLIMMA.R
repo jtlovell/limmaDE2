@@ -1,12 +1,50 @@
-pipeLIMMA<-function(counts, info, formula, block,
-                    design=NA, use.qualityWeights=TRUE,
-                    tests="all",geneIDs=NA, useBlock=TRUE,
-                    getTopTable=FALSE, getEbayes=TRUE,
-                    contrasts=NULL, simplify=TRUE, verbose=TRUE, ...){
 
-  require(limma, warn.conflicts = FALSE, quietly=TRUE)
-  require(edgeR, warn.conflicts = FALSE, quietly=TRUE)
-  require(qvalue, warn.conflicts = FALSE, quietly=TRUE)
+#' Run a pipeline of LIMMA functions for differential gene expression
+#'
+#' @param counts A count matrix
+#' @param info An experimental design matrix
+#' @param formula A character string that can be coerced to a formula
+#' @param block A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param use.qualityWeights Logical, run voom with quality weights or not?
+#' @param geneIDs The names of genes. If NA, use row names from counts matrix
+#' @param getTopTable Logical, return toptable statistics?
+#' @param getEbayes Logical, return ebayes statistics?
+#' @param simplify Logical, return a element with the F-statistics from the main model?
+#' @param verbose Logical, return progress updates?
+#' @params ... additional arguments passed on to lmfit, for example a vector of sample weights
+#' @details This function runs the following pipeline:
+#' 1. calculate normalization factors via edgeR "calcNormFactors"
+#' 2. Run limma::voom transformation
+#' 3. Run limma:lmFit linear modeling
+#' 4. Run limma::ebayes statistical modeling
+#' 5. Ouput statistics and other data
+#' @return a list with 4 or 5 (if simple=TRUE)
+#' stats the statsistics generated from ebayes, toptable, or both
+#' voom the voom normalized counts data
+#' lmfit the fitted model
+#' countsSize the normalization factors for each library
+#' simpleStats if simplify=TRUE, a dataset with the F statistics
+#' @examples
+#' library(SimSeq)
+#' library(limmaDE2)
+#' data(kidney)
+#' counts<-kidney$counts
+#' counts<-counts[sample(1:nrow(counts),1000),]
+#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=kidney$replic)
+pipeLIMMA<-function(counts, info, formula, block=NULL,
+                    design=NA, use.qualityWeights=TRUE,
+                    geneIDs=NA, getTopTable=FALSE, getEbayes=TRUE,
+                    simplify=TRUE, verbose=TRUE, ...){
+
+  require("edgeR", quietly = TRUE, warn.conflicts = FALSE)
+  require("qvalue", quietly = TRUE, warn.conflicts = FALSE)
+
+  if(is.null(block)) {
+    useBlock=FALSE
+  }else{
+    useBlock=TRUE
+  }
 
   if(verbose) cat("calculating normalization factors ... \n")
   if(is.na(geneIDs)){
@@ -29,10 +67,10 @@ pipeLIMMA<-function(counts, info, formula, block,
     if(verbose) cat("calculating duplicate correlation among replicates ... \n")
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
     if(verbose) cat("fitting linear model ... \n")
-    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
+    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
   }else{
     if(verbose) cat("fitting linear model ... \n")
-    fit <- lmFit(v, design=design)
+    fit <- lmFit(v, design=design, ...)
   }
   if(verbose) cat("processing statistics ... \n")
   fit<-eBayes(fit)
@@ -40,9 +78,9 @@ pipeLIMMA<-function(counts, info, formula, block,
                   sigma=fit$sigma,
                   s2.post=fit$s2.post,
                   Amean=fit$Amean)
-  if(tests=="all"){
-    tests<-attr(design, "dimnames")[[2]]
-  }
+
+  tests<-attr(design, "dimnames")[[2]]
+
   tests.out<-lapply(tests, function(x){
     if(getEbayes & getTopTable){
       out2<-data.frame(fit$stdev.unscaled[,x],
@@ -86,6 +124,8 @@ pipeLIMMA<-function(counts, info, formula, block,
                        Fstat=fit$F,
                        Fpvalue=fit$F.p.value,
                        Fqvalue=qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue)
+  }else{
+    simple<-NULL
   }
   tests.out2<-do.call(cbind, tests.out)
   all.out<-cbind(data.frame(out),tests.out2)

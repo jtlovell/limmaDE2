@@ -9,5 +9,6 @@ Description: A set of functions analyze and plot gene expression count data.
 License: NA
 LazyData: TRUE
 Depends:
-    limma
+    limma,
+    SimSeq
 RoxygenNote: 5.0.1
