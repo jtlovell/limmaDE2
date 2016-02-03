@@ -13,7 +13,7 @@
 #' @param getEbayes Logical, return ebayes statistics?
 #' @param simplify Logical, return a element with the F-statistics from the main model?
 #' @param verbose Logical, return progress updates?
-#' @params ... additional arguments passed on to lmfit, for example a vector of sample weights
+#' @params ... additional arguments, not currently in use.
 #'
 #' @details This function runs the following pipeline:
 ##' \itemize{
@@ -40,7 +40,8 @@
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=kidney$replic)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 pipeLIMMA<-function(counts, info, formula, block=NULL,
                     design=NA, use.qualityWeights=TRUE,
                     geneIDs=NA, getTopTable=FALSE, getEbayes=TRUE,
@@ -76,10 +77,10 @@ pipeLIMMA<-function(counts, info, formula, block=NULL,
     if(verbose) cat("calculating duplicate correlation among replicates ... \n")
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
     if(verbose) cat("fitting linear model ... \n")
-    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
+    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
   }else{
     if(verbose) cat("fitting linear model ... \n")
-    fit <- lmFit(v, design=design, ...)
+    fit <- lmFit(v, design=design)
   }
   if(verbose) cat("processing statistics ... \n")
   fit<-eBayes(fit)

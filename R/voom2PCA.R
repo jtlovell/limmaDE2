@@ -1,4 +1,30 @@
-voom2PCA<-function(v, info, ids, plotit=TRUE){
+#' @title PCA of voom-transformed counts.
+#'
+#' @description
+#' \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
+#'
+#' @param v Counts matrix, typically transformed by limma::voom. Possibly output from pipelimma, in the slot "voom".
+#' @param info The experimental design information matrix
+#' @param ids A vector of the individual names
+#' @param plotit Logical, should the pca be plotted?
+#' @params ... additional arguments passed on to barplot, for example, the colors of bars
+#'
+#' @details This function uses the R function princomp to calculate principal components
+
+#' @return a dataframe with the experimental design data, merged with the 1st 3 principal component axes
+#' @examples
+#' library(SimSeq)
+#' library(limmaDE2)
+#' data(kidney)
+#' counts<-kidney$counts
+#' counts<-counts[sample(1:nrow(counts),1000),]
+#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#' pc <- voom2PCA(v=stats$voom[["E"]], info=info, ids=rownames(info),plotit=T)
+#' library(ggplot2)
+#' ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+geom_point()
+
+voom2PCA<-function(v, info, ids, plotit=TRUE,...){
 
   pc<-prcomp(t(v))
   prop.var<-(pc$sdev)^2 / sum(pc$sdev^2)
@@ -6,8 +32,7 @@ voom2PCA<-function(v, info, ids, plotit=TRUE){
   if(plotit){
     par(mfrow=c(2,2))
     bp<-barplot(prop.var[1:5], ylab="% Variance Explained",
-                main="distribution of PCA effects", xlab="PCA Axis",
-                col=c("cyan","cyan","cyan","grey","grey"))
+                main="distribution of PCA effects", xlab="PCA Axis",...)
     axis(1, at=bp[,1], labels=1:5, title)
     with(dat, plot(PC1,PC2, type="n", bty="n", main="PC1 vs. PC2"))
     with(dat, text(PC1,PC2, label=ids))

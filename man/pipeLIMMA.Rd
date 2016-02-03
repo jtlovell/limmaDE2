@@ -30,7 +30,7 @@ pipeLIMMA(counts, info, formula, block = NULL, design = NA,
 \item{verbose}{Logical, return progress updates?}
 }
 \value{
-a list with 4 or 5 (if simple=TRUE)
+a list with 4 or 5 elements (if simple=TRUE)
 \itemize{
  \item{"stats"}{: the statsistics generated from ebayes, toptable, or both}
  \item{"voom"}{: the voom normalized counts data}
@@ -59,6 +59,7 @@ data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=kidney$replic)
+stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
+stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 }
 

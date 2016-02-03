@@ -1,11 +1,56 @@
-anovaLIMMA<-function(counts, design, contrast.matrix,
-                     block=NULL, useBlock=F, printSig=TRUE, makePlots=TRUE, verbose=T){
+#' @title A pipeline for LIMMA via a contrast marix.
+#'
+#' @description
+#' \code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for differential gene expression using a contrast matrix. Implementation is more restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs to be rownames of counts matrix.
+#'
+#' @param counts A count matrix
+#' @param design A design matrix, usually created by a call from "model.matrix"
+#' @param contrast matrix A matrix of contrasts, usually created by a call from limma:makeContrasts
+#' @param block A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param printSig Logical, should statistical significance for each contrast be printed?
+#' @param makePlots Logical, should p-value and q-value histograms be plotted?
+#' @param verbose Logical, return progress updates?
+#' @params ... additional arguments passed on to lmfit, for example a vector of sample weights
+#'
+#' @details This function runs the following pipeline:
+##' \itemize{
+##'  \item{1. }{calculate normalization factors via edgeR::calcNormFactors}
+##'  \item{2. }{Run limma::voom transformation}
+##'  \item{3. }{Run limma:lmFit linear modeling}
+##'  \item{4. }{Run limma:contrasts.fit contrast tests}
+##'  \item{5. }{Run limma::ebayes statistical modeling}
+##'  \item{6. }{Ouput statistics and other data}
+##' }
+##'
+#' @return a dataframe with the statistics for each contrast and the overall f-test
+#' @examples
+#' library(SimSeq)
+#' library(limmaDE2)
+#' data(kidney)
+#' counts<-kidney$counts
+#' counts<-counts[sample(1:nrow(counts),1000),]
+#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+#' f<-gsub("-","_",info$treatment)
+#'
+#' design <- model.matrix(~0+f)
+#' contrast.matrix<-makeContrasts(fNon_Tumor-fTumor, levels=design)
+#' lim.contrasts<-pipeLIMMA.contrasts(counts=counts, design=design, block=info$rep,
+#'        contrast.matrix=contrast.matrix)
+
+pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
+                     block=NULL, printSig=TRUE, makePlots=TRUE, verbose=TRUE, ...){
 
   require(limma, warn.conflicts = FALSE, quietly=TRUE)
   require(edgeR, warn.conflicts = FALSE, quietly=TRUE)
   require(qvalue, warn.conflicts = FALSE, quietly=TRUE)
   require(ggplot2, warn.conflicts = FALSE, quietly=TRUE)
   require(qdap, warn.conflicts = FALSE, quietly=TRUE)
+
+  if(is.null(block)) {
+    useBlock=FALSE
+  }else{
+    useBlock=TRUE
+  }
 
   geneIDs<-rownames(counts)
   if(verbose) cat("calculating normalization factors...\n")
@@ -18,11 +63,11 @@ anovaLIMMA<-function(counts, design, contrast.matrix,
   if(useBlock){
     if(verbose) cat("calculating duplicate correlation and fitting LIMMA w/ block...\n")
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
-    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
+    fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block),...)
     fit2 <- contrasts.fit(fit, contrast.matrix)
   }else{
     if(verbose) cat("fitting LIMMA w/o a block effect...\n")
-    fit <- lmFit(v, design=design)
+    fit <- lmFit(v, design=design, ...)
     fit2 <- contrasts.fit(fit, contrast.matrix)
   }
   if(verbose) cat("generating statistics...\n")
@@ -70,7 +115,7 @@ anovaLIMMA<-function(counts, design, contrast.matrix,
   colnames(qs)<-multigsub(c("q.value_","..."),c("","."), colnames(qs))
   if(printSig){
     if(verbose) cat("printing counts of significant results...\n")
-    for(i in colnames(qs)) cat("n.significant genes",i,sum(qs[,i]<=0.05),"\n", sep="\t")
+    for(i in colnames(qs)[-which(colnames(qs)=="type")]) cat("n.significant genes",i,sum(qs[,i]<=0.05),"\n", sep="\t")
   }
   return(all.out)
 }
