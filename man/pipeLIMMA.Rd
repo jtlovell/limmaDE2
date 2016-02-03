@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeLIMMA.R
 \name{pipeLIMMA}
 \alias{pipeLIMMA}
-\title{Run a pipeline of LIMMA functions for differential gene expression}
+\title{A pipeline for LIMMA.}
 \usage{
 pipeLIMMA(counts, info, formula, block = NULL, design = NA,
   use.qualityWeights = TRUE, geneIDs = NA, getTopTable = FALSE,
@@ -31,22 +31,26 @@ pipeLIMMA(counts, info, formula, block = NULL, design = NA,
 }
 \value{
 a list with 4 or 5 (if simple=TRUE)
-stats the statsistics generated from ebayes, toptable, or both
-voom the voom normalized counts data
-lmfit the fitted model
-countsSize the normalization factors for each library
-simpleStats if simplify=TRUE, a dataset with the F statistics
+\itemize{
+ \item{"stats"}{: the statsistics generated from ebayes, toptable, or both}
+ \item{"voom"}{: the voom normalized counts data}
+ \item{"lmfit"}{: the fitted model}
+ \item{"countsSize"}{: the normalization factors for each library}
+ \item{"simpleStats"}{: if simplify=TRUE, a dataset with the F statistics}
+}
 }
 \description{
-Run a pipeline of LIMMA functions for differential gene expression
+\code{pipeLIMMA} Run a pipeline of LIMMA functions for differential gene expression.
 }
 \details{
 This function runs the following pipeline:
-1. calculate normalization factors via edgeR "calcNormFactors"
-2. Run limma::voom transformation
-3. Run limma:lmFit linear modeling
-4. Run limma::ebayes statistical modeling
-5. Ouput statistics and other data
+\itemize{
+ \item{1. }{calculate normalization factors via edgeR::calcNormFactors}
+ \item{2. }{Run limma::voom transformation}
+ \item{3. }{Run limma:lmFit linear modeling}
+ \item{4. }{Run limma::ebayes statistical modeling}
+ \item{5. }{Ouput statistics and other data}
+}
 }
 \examples{
 library(SimSeq)

@@ -1,5 +1,7 @@
-
-#' Run a pipeline of LIMMA functions for differential gene expression
+#' @title A pipeline for LIMMA.
+#'
+#' @description
+#' \code{pipeLIMMA} Run a pipeline of LIMMA functions for differential gene expression.
 #'
 #' @param counts A count matrix
 #' @param info An experimental design matrix
@@ -12,18 +14,25 @@
 #' @param simplify Logical, return a element with the F-statistics from the main model?
 #' @param verbose Logical, return progress updates?
 #' @params ... additional arguments passed on to lmfit, for example a vector of sample weights
+#'
 #' @details This function runs the following pipeline:
-#' 1. calculate normalization factors via edgeR "calcNormFactors"
-#' 2. Run limma::voom transformation
-#' 3. Run limma:lmFit linear modeling
-#' 4. Run limma::ebayes statistical modeling
-#' 5. Ouput statistics and other data
-#' @return a list with 4 or 5 (if simple=TRUE)
-#' stats the statsistics generated from ebayes, toptable, or both
-#' voom the voom normalized counts data
-#' lmfit the fitted model
-#' countsSize the normalization factors for each library
-#' simpleStats if simplify=TRUE, a dataset with the F statistics
+##' \itemize{
+##'  \item{1. }{calculate normalization factors via edgeR::calcNormFactors}
+##'  \item{2. }{Run limma::voom transformation}
+##'  \item{3. }{Run limma:lmFit linear modeling}
+##'  \item{4. }{Run limma::ebayes statistical modeling}
+##'  \item{5. }{Ouput statistics and other data}
+##' }
+##'
+#' @return a list with 4 or 5 elements (if simple=TRUE)
+##' \itemize{
+##'  \item{"stats"}{: the statsistics generated from ebayes, toptable, or both}
+##'  \item{"voom"}{: the voom normalized counts data}
+##'  \item{"lmfit"}{: the fitted model}
+##'  \item{"countsSize"}{: the normalization factors for each library}
+##'  \item{"simpleStats"}{: if simplify=TRUE, a dataset with the F statistics}
+##' }
+##'
 #' @examples
 #' library(SimSeq)
 #' library(limmaDE2)
