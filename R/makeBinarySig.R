@@ -22,7 +22,7 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' sig<-makeBinarySig(x= stats$stats, what="p.value")
-
+#' @export
 makeBinarySig<-function(x, alpha=0.05, what="q.value", na.include=TRUE, verbose=TRUE){
   sig.q<-data.matrix(x[,grep(what, colnames(x))])
   if(!na.include){
