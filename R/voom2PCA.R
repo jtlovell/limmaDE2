@@ -19,7 +19,7 @@
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' pc <- voom2PCA(v=stats$voom[["E"]], info=info, ids=rownames(info),plotit=T)
+#' pc <- voom2PCA(v=stats$voom[["E"]], info=info, ids=rownames(info),plotit=TRUE)
 #' library(ggplot2)
 #' ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+geom_point()
 #' @export

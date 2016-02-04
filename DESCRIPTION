@@ -17,7 +17,7 @@ Depends:
     dendroextras,
     Heatplus,
     qvalue,
-    edgeR,
-    edgeR,
-    qdap
+    qdap,
+    reshape2,
+    gdata
 RoxygenNote: 5.0.1

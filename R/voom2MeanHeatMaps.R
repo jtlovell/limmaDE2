@@ -32,9 +32,6 @@
 #' @export
 voom2MeanHeatMaps<-function(v, grps=info$Treatment, thresh=7, calcMeans=T, newIDs=NA, allHMtoo=T){
   opar<-par()
-  require(gdata, warn.conflicts = FALSE, quietly=TRUE)
-  require(dendroextras, warn.conflicts = FALSE, quietly=TRUE)
-  require(Heatplus, warn.conflicts = FALSE, quietly=TRUE)
 
   if(calcMeans){
     v<-as.matrix(v)
