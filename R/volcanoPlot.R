@@ -38,8 +38,6 @@ volcanoPlot<-function(pval, lfc, sig, alpha=0.05,
                       pchs=c(19,19), cex=c(.5,.5),legpos=c(-0.25,0),
                       ylab="-log10 P-value", xlab="log2 Fold Change",...){
 
-  par.original <- par(no.readonly=TRUE)
-
   if(length(unique(sig))>2){
     sig<-ifelse(sig<=alpha, TRUE, FALSE)
   }else{
@@ -59,8 +57,6 @@ volcanoPlot<-function(pval, lfc, sig, alpha=0.05,
          pch=c(pchs[1],pchs[1],pchs[2]),
          col=c(pointcols[1], pointcols[1], pointcols[2]),
          ncol=1, title="significance", xjust=0, yjust=.5)
-
-  par(par.original)
 
   return(table(updown,sig))
 }
