@@ -141,8 +141,8 @@ pipeLIMMA<-function(counts, info, formula, block=NULL,
                        Fstat=fit$F,
                        Fpvalue=fit$F.p.value,
                        Fqvalue=qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue)
-    simple$id=row.names(out2)
-    simple<-simple[match(geneIDs,simple$gene),]
+    simple$id=row.names(fit$F.p.value)
+    simple<-simple[match(geneIDs,names(fit$Amean)),]
   }else{
     simple<-NULL
   }
