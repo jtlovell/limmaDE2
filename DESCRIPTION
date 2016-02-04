@@ -10,14 +10,15 @@ License: GPL-3
 LazyData: TRUE
 Depends:
     limma,
-    SimSeq,
+    SimSeq
+Imports:
     ggplot2,
     edgeR,
     venneuler,
-    dendroextras,
-    Heatplus,
     qvalue,
     qdap,
     reshape2,
+    dendroextras,
+    Heatplus,
     gdata
 RoxygenNote: 5.0.1

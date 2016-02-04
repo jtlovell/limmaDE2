@@ -7,7 +7,8 @@
 voom2PCA(v, info, ids, plotit = TRUE, ...)
 }
 \arguments{
-\item{v}{Counts matrix, typically transformed by limma::voom. Possibly output from pipelimma, in the slot "voom".}
+\item{v}{Counts matrix, typically transformed by limma::voom.
+Possibly output from pipelimma, in the slot "voom".}
 
 \item{info}{The experimental design information matrix}
 
@@ -18,7 +19,8 @@ voom2PCA(v, info, ids, plotit = TRUE, ...)
 \item{...}{additional arguments passed on to barplot, for example, the colors of bars}
 }
 \value{
-a dataframe with the experimental design data, merged with the 1st 3 principal component axes
+a dataframe with the experimental design data, merged with the 1st
+3 principal component axes
 }
 \description{
 \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts

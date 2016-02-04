@@ -28,7 +28,8 @@ counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 stats.fullmodel<-stats$stats
-pqHists(stats.fullmodel, what.p="treatmenttumor_p.value", what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
+pqHists(stats.fullmodel, what.p="treatmenttumor_p.value",
+ what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
 
 }
 

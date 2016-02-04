@@ -12,22 +12,27 @@ makeBinarySig(x, alpha = 0.05, what = "q.value", na.include = TRUE,
 
 \item{alpha}{The threshold that defines what is and is not significance}
 
-\item{what}{Character vector defining a string to look for in the column names. For example, "q.value"}
+\item{what}{Character vector defining a string to look for in the column names.
+For example, "q.value"}
 
-\item{na.include}{Logical, should NAs be classified as not significant? If false, all rows with any NAs are dropped.}
+\item{na.include}{Logical, should NAs be classified as not significant? If false,
+all rows with any NAs are dropped.}
 
 \item{verbose}{Logical, should the number of significant values be printed}
 }
 \value{
-a dataframe with all values in the original matrix with column names containing what, where
-the values have been transformed to binary
+a dataframe with all values in the original matrix with column names containing
+what, where the values have been transformed to binary
 }
 \description{
-\code{makeBinarySig} Convert some sort of significance distribution to binary signifcance calls.
+\code{makeBinarySig} Convert some sort of significance distribution to binary
+signifcance calls.
 }
 \details{
-Given a matrix with p/q values, this function greps for the string in "what" and classifies each column as
-either significant (1) or not (0). Esspecially useful for a dataset that has many p-value or q-value columns
+Given a matrix with p/q values, this function greps for the string in
+"what" and classifies each column as
+either significant (1) or not (0). Esspecially useful for a dataset that has many
+p-value or q-value columns
 }
 \examples{
 data(kidney)

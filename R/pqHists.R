@@ -17,12 +17,25 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' stats.fullmodel<-stats$stats
-#' pqHists(stats.fullmodel, what.p="treatmenttumor_p.value", what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
+#' pqHists(stats.fullmodel, what.p="treatmenttumor_p.value",
+#'  what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
 #'
 #' @export
 pqHists<-function(x, what.p="p.value",what.q="q.value",alpha=0.05,main="significance distribution",...){
   par(mfrow=c(1,2))
-  hist(x[,grep(what.p, colnames(x))], xlab="p.value",main=paste(main, "\n","n.pvalue < ",alpha," = ",sum(x[,grep(what.p, colnames(x))]<=alpha),sep=""),...)
-  hist(x[,grep(what.q, colnames(x))], xlab="q.value",main=paste(main, "\n","n.qvalue < ",alpha," = ",sum(x[,grep(what.q, colnames(x))]<=alpha),sep=""),...)
+  hist(x[,grep(what.p, colnames(x))],
+       xlab="p.value",
+       main=paste(main,
+                  "\n","n.pvalue < ",
+                  alpha," = ",
+                  sum(x[,grep(what.p, colnames(x))]<=alpha),sep=""),
+       ...)
+  hist(x[,grep(what.q, colnames(x))],
+       xlab="q.value",
+       main=paste(main,
+                  "\n","n.qvalue < ",
+                  alpha," = ",
+                  sum(x[,grep(what.q, colnames(x))]<=alpha),sep=""),
+       ...)
   par(mfrow=c(1,1))
 }

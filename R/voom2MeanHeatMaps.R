@@ -4,19 +4,24 @@
 #' @description
 #' \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
 #'
-#' @param v Counts matrix, typically transformed by limma::voom. Possibly output from pipelimma, in the slot voom[["E"]].
+#' @param v Counts matrix, typically transformed by limma::voom.
+#' Possibly output from pipelimma, in the slot voom[["E"]].
 #' @param grps The grouping factor within which to calculate mean expression values
-#' @param thresh The threshold at which to cut the dendrogram into separate groups. This also defines the number of sub-heatmaps to make.
+#' @param thresh The threshold at which to cut the dendrogram into
+#' separate groups. This also defines the number of sub-heatmaps to make.
 #' Smaller values lead to more groups and more sub heatmaps.
-#' @param calcMeans Logical, should means for each group be calculated? Simplifies plotting considerably.
+#' @param calcMeans Logical, should means for each group be calculated?
+#' Simplifies plotting considerably.
 #' @param newIDs If calcMeans=FALSE, a vector of names for the columns in the heatmaps
 #' @param allHMtoo Should the complete heatmap be plotted in addition to the sub heatmaps?
 #'
-#' @details This function is typically used to calculate group mean normalized expression to display the effects of different
-#' experimental factors. Specifically, for each level it calculates the mean. Then normalizes across levels using
-#' scale(..., center=TRUE, scale=TRUE). These scaled, centered values are used to calculate a dendrogram with hclust.
-#' The dendrogram is split into groups using cuttree. The dendrogram is plotted, colored by groups. Complete and sub heatmaps
-#' are subsequently plotted.
+#' @details This function is typically used to calculate group mean
+#' normalized expression to display the effects of different
+#' experimental factors. Specifically, for each level it calculates the mean.
+#' Then normalizes across levels using scale(..., center=TRUE, scale=TRUE).
+#' These scaled, centered values are used to calculate a dendrogram with hclust.
+#' The dendrogram is split into groups using cuttree. The dendrogram is plotted,
+#' colored by groups. Complete and sub heatmaps are subsequently plotted.
 
 #' @return a dataframe with the normalized means.
 #' @examples
@@ -29,6 +34,9 @@
 #' which.toplot<-which(stats.fullmodel$ebayes_treatmenttumor_q.value<=1e-20)
 #' v<-stats$voom[["E"]]
 #' v.means<-voom2MeanHeatMaps(v=v[which.toplot,], grps=info$rep, thresh=21)
+#' @importFrom  gdata read.xls startsWith
+#' @importFrom  dendroextras color_clusters
+#' @importFrom  Heatplus annHeatmap2
 #' @export
 voom2MeanHeatMaps<-function(v, grps=info$Treatment, thresh=7, calcMeans=T, newIDs=NA, allHMtoo=T){
   opar<-par()

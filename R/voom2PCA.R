@@ -4,7 +4,8 @@
 #' @description
 #' \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
 #'
-#' @param v Counts matrix, typically transformed by limma::voom. Possibly output from pipelimma, in the slot "voom".
+#' @param v Counts matrix, typically transformed by limma::voom.
+#' Possibly output from pipelimma, in the slot "voom".
 #' @param info The experimental design information matrix
 #' @param ids A vector of the individual names
 #' @param plotit Logical, should the pca be plotted?
@@ -12,7 +13,8 @@
 #'
 #' @details This function uses the R function princomp to calculate principal components
 
-#' @return a dataframe with the experimental design data, merged with the 1st 3 principal component axes
+#' @return a dataframe with the experimental design data, merged with the 1st
+#' 3 principal component axes
 #' @examples
 #' data(kidney)
 #' counts<-kidney$counts

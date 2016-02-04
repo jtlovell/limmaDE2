@@ -2,12 +2,17 @@
 #'
 #'
 #' @description
-#' \code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for differential gene expression using a contrast matrix. Implementation is more restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs to be rownames of counts matrix.
+#' \code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for
+#' differential gene expression using a contrast matrix. Implementation is more
+#' restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs
+#' to be rownames of counts matrix.
 #'
 #' @param counts A count matrix
 #' @param design A design matrix, usually created by a call from "model.matrix"
-#' @param contrast matrix A matrix of contrasts, usually created by a call from limma:makeContrasts
-#' @param block A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param contrast matrix A matrix of contrasts, usually created by a call
+#' from limma:makeContrasts
+#' @param block A string that represents an individual that was repeatedly
+#' measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
 #' @param printSig Logical, should statistical significance for each contrast be printed?
 #' @param makePlots Logical, should p-value and q-value histograms be plotted?
 #' @param verbose Logical, return progress updates?
@@ -35,6 +40,11 @@
 #' contrast.matrix<-makeContrasts(fNon_Tumor-fTumor, levels=design)
 #' lim.contrasts<-pipeLIMMA.contrasts(counts=counts, design=design, block=info$rep,
 #'        contrast.matrix=contrast.matrix)
+#' @importFrom  edgeR calcNormFactors DGEList
+#' @importFrom  qvalue qvalue
+#' @importFrom  qdap multigsub
+#' @importFrom  ggplot2 ggplot
+#' @importFrom  reshape2 melt
 #' @export
 pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
                      block=NULL, printSig=TRUE, makePlots=TRUE, verbose=TRUE, ...){

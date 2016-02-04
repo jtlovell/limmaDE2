@@ -2,17 +2,23 @@
 #'
 #'
 #' @description
-#' \code{counts2Venn} Take a binary significance classification matrix and produce two types of venn diagrams.
+#' \code{counts2Venn} Take a binary significance classification matrix and
+#' produce two types of venn diagrams.
 #'
-#' @param x A dataframe or matrix containing the binary significance calls (1=significant, 0=NS)
-#' @param cols A vector with the column names or numbers to use for plots. Must be of length <=4.
+#' @param x A dataframe or matrix containing the binary significance calls
+#' (1=significant, 0=NS)
+#' @param cols A vector with the column names or numbers to use for plots.
+#' Must be of length <=4.
 #' @param names A vector of names for each of the venn circles.
 #' @param colors A vector of colors to use for each cirlce.
-#' @param type The type of venn diagram to plot. Scaled = size of circles is weighted. Both = both types. Any other call gives typical venn diagrams.
+#' @param type The type of venn diagram to plot. Scaled = size of circles is
+#' weighted. Both = both types. Any other call gives typical venn diagrams.
 #' @param legx,legy Position of legend for plot type "limma" or "both"
 #' @param ... additional arguments passed to plot.
-#' @details given a binary significance classification matrix, run functions to produce venn diagrams.
-#' if scaled, runs venneuler::venneuler venn diagrams. Otherwise, runs limma::vennCounts/vennDiagram
+#' @details given a binary significance classification matrix, run functions to
+#' produce venn diagrams.
+#' if scaled, runs venneuler::venneuler venn diagrams. Otherwise, runs
+#' limma::vennCounts/vennDiagram
 
 #' @return generates a plot. Does not return anything
 #'
@@ -23,7 +29,9 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' sig<-makeBinarySig(x= stats$stats, what="p.value")
-#' counts2Venn(x=sig, cols=c(1,2), names=c("intercept","treatment"),colors=c("blue","darkred"),type="limma", legx=-3.3,legy=-3)
+#' counts2Venn(x=sig, cols=c(1,2), names=c("intercept","treatment"),
+#'    colors=c("blue","darkred"),type="limma", legx=-3.3,legy=-3)
+#' @importFrom  venneuler venneuler
 #' @export
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
   if(type=="both"){

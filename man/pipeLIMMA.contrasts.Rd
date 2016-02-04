@@ -12,7 +12,8 @@ pipeLIMMA.contrasts(counts, design, contrast.matrix, block = NULL,
 
 \item{design}{A design matrix, usually created by a call from "model.matrix"}
 
-\item{block}{A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor}
+\item{block}{A string that represents an individual that was repeatedly
+measured, if NULL, runs the analysis without a blocking / duplicate correlation factor}
 
 \item{printSig}{Logical, should statistical significance for each contrast be printed?}
 
@@ -22,13 +23,17 @@ pipeLIMMA.contrasts(counts, design, contrast.matrix, block = NULL,
 
 \item{...}{additional arguments passed on to lmfit, for example a vector of sample weights}
 
-\item{contrast}{matrix A matrix of contrasts, usually created by a call from limma:makeContrasts}
+\item{contrast}{matrix A matrix of contrasts, usually created by a call
+from limma:makeContrasts}
 }
 \value{
 a dataframe with the statistics for each contrast and the overall f-test
 }
 \description{
-\code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for differential gene expression using a contrast matrix. Implementation is more restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs to be rownames of counts matrix.
+\code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for
+differential gene expression using a contrast matrix. Implementation is more
+restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs
+to be rownames of counts matrix.
 }
 \details{
 This function runs the following pipeline:

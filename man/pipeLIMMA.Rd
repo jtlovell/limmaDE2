@@ -15,7 +15,8 @@ pipeLIMMA(counts, info, formula, block = NULL, design = NA,
 
 \item{formula}{A character string that can be coerced to a formula}
 
-\item{block}{A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor}
+\item{block}{A string that represents an individual that was repeatedly measured,
+if NULL, runs the analysis without a blocking / duplicate correlation factor}
 
 \item{use.qualityWeights}{Logical, run voom with quality weights or not?}
 
@@ -61,6 +62,5 @@ counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-
 }
 

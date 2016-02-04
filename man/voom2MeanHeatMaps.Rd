@@ -8,14 +8,17 @@ voom2MeanHeatMaps(v, grps = info$Treatment, thresh = 7, calcMeans = T,
   newIDs = NA, allHMtoo = T)
 }
 \arguments{
-\item{v}{Counts matrix, typically transformed by limma::voom. Possibly output from pipelimma, in the slot voom[["E"]].}
+\item{v}{Counts matrix, typically transformed by limma::voom.
+Possibly output from pipelimma, in the slot voom[["E"]].}
 
 \item{grps}{The grouping factor within which to calculate mean expression values}
 
-\item{thresh}{The threshold at which to cut the dendrogram into separate groups. This also defines the number of sub-heatmaps to make.
+\item{thresh}{The threshold at which to cut the dendrogram into
+separate groups. This also defines the number of sub-heatmaps to make.
 Smaller values lead to more groups and more sub heatmaps.}
 
-\item{calcMeans}{Logical, should means for each group be calculated? Simplifies plotting considerably.}
+\item{calcMeans}{Logical, should means for each group be calculated?
+Simplifies plotting considerably.}
 
 \item{newIDs}{If calcMeans=FALSE, a vector of names for the columns in the heatmaps}
 
@@ -28,11 +31,13 @@ a dataframe with the normalized means.
 \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
 }
 \details{
-This function is typically used to calculate group mean normalized expression to display the effects of different
-experimental factors. Specifically, for each level it calculates the mean. Then normalizes across levels using
-scale(..., center=TRUE, scale=TRUE). These scaled, centered values are used to calculate a dendrogram with hclust.
-The dendrogram is split into groups using cuttree. The dendrogram is plotted, colored by groups. Complete and sub heatmaps
-are subsequently plotted.
+This function is typically used to calculate group mean
+normalized expression to display the effects of different
+experimental factors. Specifically, for each level it calculates the mean.
+Then normalizes across levels using scale(..., center=TRUE, scale=TRUE).
+These scaled, centered values are used to calculate a dendrogram with hclust.
+The dendrogram is split into groups using cuttree. The dendrogram is plotted,
+colored by groups. Complete and sub heatmaps are subsequently plotted.
 }
 \examples{
 data(kidney)

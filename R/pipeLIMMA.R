@@ -7,7 +7,8 @@
 #' @param counts A count matrix
 #' @param info An experimental design matrix
 #' @param formula A character string that can be coerced to a formula
-#' @param block A string that represents an individual that was repeatedly measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param block A string that represents an individual that was repeatedly measured,
+#' if NULL, runs the analysis without a blocking / duplicate correlation factor
 #' @param use.qualityWeights Logical, run voom with quality weights or not?
 #' @param geneIDs The names of genes. If NA, use row names from counts matrix
 #' @param getTopTable Logical, return toptable statistics?
@@ -41,7 +42,8 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#'
+#' @importFrom  edgeR calcNormFactors DGEList
+#' @importFrom  qvalue qvalue
 #' @export
 pipeLIMMA<-function(counts, info, formula, block=NULL,
                     design=NA, use.qualityWeights=TRUE,
@@ -100,12 +102,17 @@ pipeLIMMA<-function(counts, info, formula, block=NULL,
       out3<-data.frame(toptable(fit, p.value=1, coef=x, number=100000))
       out3<-out3[,c("logFC","t","B")]
       colnames(out3)<-paste("tt",x,colnames(out3),sep="_")
-      out2<-data.frame(out2, out3)
+      out3$id=row.names(out3)
+      out2$id=row.names(out2)
+      out2<-merge(out2, out3, by="id")
+      out2<-out2[match(geneIDs,out2$id),]
     }else{
       if(getTopTable){
         out2<-data.frame(toptable(fit, p.value=1, coef=x, number=100000))
-        out3<-out3[,c("logFC","t","B")]
+        out2<-out2[,c("logFC","t","B")]
         colnames(out2)<-paste("tt", x,colnames(out2),sep="_")
+        out2$id=row.names(out2)
+        out2<-out2[match(geneIDs,out2$id),]
       }else{
         out2<-data.frame(fit$stdev.unscaled[,x],
                         fit$coefficients[,x],
@@ -119,19 +126,23 @@ pipeLIMMA<-function(counts, info, formula, block=NULL,
         )
 
         colnames(out2)<-paste("ebayes",x,c("stdev.unscaled","coefficients","lods","p.value","q.value"),sep="_")
+        out2$id=row.names(out2)
+        out2<-out2[match(geneIDs,out2$id),]
       }
     }
     out2
   })
   if(simplify){
     fit<-fit[,-1]
-    simple<-data.frame(gene=geneIDs,
+    simple<-data.frame(gene=rownames(fit$lods),
                        sigma=fit$sigma,
                        s2.post=fit$s2.post,
                        Amean=fit$Amean,
                        Fstat=fit$F,
                        Fpvalue=fit$F.p.value,
                        Fqvalue=qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue)
+    simple$id=row.names(out2)
+    simple<-simple[match(geneIDs,simple$gene),]
   }else{
     simple<-NULL
   }
