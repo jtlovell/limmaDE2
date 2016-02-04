@@ -4,19 +4,29 @@
 \alias{pipeLIMMA}
 \title{A pipeline for LIMMA.}
 \usage{
-pipeLIMMA(counts, info, formula, block = NULL, design = NA,
-  use.qualityWeights = TRUE, geneIDs = NA, getTopTable = FALSE,
-  getEbayes = TRUE, simplify = TRUE, verbose = TRUE, ...)
+pipeLIMMA(counts, info, formula = NULL, contrast.matrix = NULL,
+  block = NULL, design = NULL, use.qualityWeights = TRUE, geneIDs = NA,
+  getTopTable = FALSE, getEbayes = TRUE, simplify = TRUE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{counts}{A count matrix}
 
 \item{info}{An experimental design matrix}
 
-\item{formula}{A character string that can be coerced to a formula}
+\item{formula}{A character string that can be coerced to a formula. Specify if a contrast
+model is not desired.}
+
+\item{contrast.matrix}{A matrix of contrasts, usually created by a call
+from limma:makeContrasts. Used only limma:contrast.fit is intended as the statistical
+modeling function. NULL values force a traditional test of effects via limma::lmFit/ebayes.}
 
 \item{block}{A string that represents an individual that was repeatedly measured,
 if NULL, runs the analysis without a blocking / duplicate correlation factor}
+
+\item{design}{A design matrix, usually created by a call from "model.matrix". Used only if
+limma:contrast.fit is intended as the statistical modeling function. NULL values force
+a traditional test of effects via limma::lmFit/ebayes.}
 
 \item{use.qualityWeights}{Logical, run voom with quality weights or not?}
 
@@ -33,13 +43,10 @@ if NULL, runs the analysis without a blocking / duplicate correlation factor}
 \item{...}{additional arguments, not currently in use.}
 }
 \value{
-a list with 4 or 5 elements (if simple=TRUE)
+a list with 2 elements (if simple=TRUE)
 \itemize{
- \item{"stats"}{: the statsistics generated from ebayes, toptable, or both}
+ \item{"stats"}{: the statsistics generated from ebayes and topTable}
  \item{"voom"}{: the voom normalized counts data}
- \item{"lmfit"}{: the fitted model}
- \item{"countsSize"}{: the normalization factors for each library}
- \item{"simpleStats"}{: if simplify=TRUE, a dataset with the F statistics}
 }
 }
 \description{
@@ -52,7 +59,8 @@ This function runs the following pipeline:
  \item{2. }{Run limma::voom transformation}
  \item{3. }{Run limma:lmFit linear modeling}
  \item{4. }{Run limma::ebayes statistical modeling}
- \item{5. }{Ouput statistics and other data}
+ \item{5. }{Collect Log2 Fold-Changes using limma:topTable}
+ \item{6. }{Collate and ouput statistics and voom transformed data}
 }
 }
 \examples{

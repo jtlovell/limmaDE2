@@ -12,6 +12,9 @@ pipeLIMMA.contrasts(counts, design, contrast.matrix, block = NULL,
 
 \item{design}{A design matrix, usually created by a call from "model.matrix"}
 
+\item{contrast.matrix}{A matrix of contrasts, usually created by a call
+from limma:makeContrasts}
+
 \item{block}{A string that represents an individual that was repeatedly
 measured, if NULL, runs the analysis without a blocking / duplicate correlation factor}
 
@@ -22,9 +25,6 @@ measured, if NULL, runs the analysis without a blocking / duplicate correlation 
 \item{verbose}{Logical, return progress updates?}
 
 \item{...}{additional arguments passed on to lmfit, for example a vector of sample weights}
-
-\item{contrast}{matrix A matrix of contrasts, usually created by a call
-from limma:makeContrasts}
 }
 \value{
 a dataframe with the statistics for each contrast and the overall f-test

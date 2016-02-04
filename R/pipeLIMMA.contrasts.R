@@ -44,6 +44,7 @@
 #' @importFrom  qvalue qvalue
 #' @importFrom  qdap multigsub
 #' @importFrom  reshape2 melt
+#' @importFrom  reshape merge_recurse
 #' @import  ggplot2
 #' @export
 pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
@@ -74,7 +75,19 @@ pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
     fit2 <- contrasts.fit(fit, contrast.matrix)
   }
   if(verbose) cat("generating statistics...\n")
+
   fit2<-eBayes(fit2)
+  coefnames<-gsub(" ","",colnames(fit2))
+  coefnames<-gsub("-",".",coefnames)
+  lfcs<-lapply(1:length(coefnames), function(x) {
+    tt<-topTable(fit2, coef=x, p.value=1, number=100000)
+    tt<-tt[,c("logFC","P.Value")]
+    colnames(tt)<-paste(coefnames[x],colnames(tt),sep="_")
+    tt$id<-row.names(tt)
+  })
+  tt.out<-merge_recurse(lfcs, by="id")
+  lapply(1:length(coefnames))
+  tt2<-data.frame(toptable(fit, p.value=1, coef=1, number=100000))
   out.aov<-data.frame(gene=geneIDs,
                       sigma=fit2$sigma,
                       s2.post=fit2$s2.post,
