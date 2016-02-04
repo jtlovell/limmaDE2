@@ -6,9 +6,18 @@ Date: 2016-02-03
 Author: John T. Lovell
 Maintainer: John T. Lovell <johntlovell@gmail.com>
 Description: A set of functions analyze and plot gene expression count data.
-License: NA
+License: GPL-3
 LazyData: TRUE
 Depends:
     limma,
-    SimSeq
+    SimSeq,
+    ggplot2,
+    edgeR,
+    venneuler,
+    dendroextras,
+    Heatplus,
+    qvalue,
+    edgeR,
+    edgeR,
+    qdap
 RoxygenNote: 5.0.1

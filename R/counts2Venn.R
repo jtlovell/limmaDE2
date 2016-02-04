@@ -1,5 +1,6 @@
 #' @title Make venn diagrams based on significance classification
 #'
+#'
 #' @description
 #' \code{counts2Venn} Take a binary significance classification matrix and produce two types of venn diagrams.
 #'
@@ -16,9 +17,6 @@
 #' @return generates a plot. Does not return anything
 #'
 #' @examples
-#' library(limmaDE2)
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
@@ -26,8 +24,6 @@
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' sig<-makeBinarySig(x= stats$stats, what="p.value")
 #' counts2Venn(x=sig, cols=c(1,2), names=c("intercept","treatment"),colors=c("blue","darkred"),type="limma", legx=-3.3,legy=-3)
-#'
-#' @imports venneuler
 
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
   if(type=="both"){

@@ -1,5 +1,6 @@
 #' @title A pipeline for LIMMA via a contrast marix.
 #'
+#'
 #' @description
 #' \code{pipeLIMMA.contrasts} Run a pipeline of LIMMA functions for differential gene expression using a contrast matrix. Implementation is more restrictive than pipeLIMMA and forces voom w/ quality weights and geneIDs to be rownames of counts matrix.
 #'
@@ -10,7 +11,7 @@
 #' @param printSig Logical, should statistical significance for each contrast be printed?
 #' @param makePlots Logical, should p-value and q-value histograms be plotted?
 #' @param verbose Logical, return progress updates?
-#' @params ... additional arguments passed on to lmfit, for example a vector of sample weights
+#' @param ... additional arguments passed on to lmfit, for example a vector of sample weights
 #'
 #' @details This function runs the following pipeline:
 ##' \itemize{
@@ -24,8 +25,6 @@
 ##'
 #' @return a dataframe with the statistics for each contrast and the overall f-test
 #' @examples
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
@@ -36,15 +35,9 @@
 #' contrast.matrix<-makeContrasts(fNon_Tumor-fTumor, levels=design)
 #' lim.contrasts<-pipeLIMMA.contrasts(counts=counts, design=design, block=info$rep,
 #'        contrast.matrix=contrast.matrix)
-
+#' @export
 pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
                      block=NULL, printSig=TRUE, makePlots=TRUE, verbose=TRUE, ...){
-
-  require(limma, warn.conflicts = FALSE, quietly=TRUE)
-  require(edgeR, warn.conflicts = FALSE, quietly=TRUE)
-  require(qvalue, warn.conflicts = FALSE, quietly=TRUE)
-  require(ggplot2, warn.conflicts = FALSE, quietly=TRUE)
-  require(qdap, warn.conflicts = FALSE, quietly=TRUE)
 
   if(is.null(block)) {
     useBlock=FALSE

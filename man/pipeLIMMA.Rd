@@ -28,6 +28,8 @@ pipeLIMMA(counts, info, formula, block = NULL, design = NA,
 \item{simplify}{Logical, return a element with the F-statistics from the main model?}
 
 \item{verbose}{Logical, return progress updates?}
+
+\item{...}{additional arguments, not currently in use.}
 }
 \value{
 a list with 4 or 5 elements (if simple=TRUE)
@@ -53,13 +55,12 @@ This function runs the following pipeline:
 }
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+
 }
 

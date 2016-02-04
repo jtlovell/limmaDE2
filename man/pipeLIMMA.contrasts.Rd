@@ -20,6 +20,8 @@ pipeLIMMA.contrasts(counts, design, contrast.matrix, block = NULL,
 
 \item{verbose}{Logical, return progress updates?}
 
+\item{...}{additional arguments passed on to lmfit, for example a vector of sample weights}
+
 \item{contrast}{matrix A matrix of contrasts, usually created by a call from limma:makeContrasts}
 }
 \value{
@@ -40,8 +42,6 @@ This function runs the following pipeline:
 }
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]

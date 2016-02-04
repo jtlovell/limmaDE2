@@ -1,5 +1,6 @@
 #' @title A pipeline for LIMMA.
 #'
+#'
 #' @description
 #' \code{pipeLIMMA} Run a pipeline of LIMMA functions for differential gene expression.
 #'
@@ -13,7 +14,7 @@
 #' @param getEbayes Logical, return ebayes statistics?
 #' @param simplify Logical, return a element with the F-statistics from the main model?
 #' @param verbose Logical, return progress updates?
-#' @params ... additional arguments, not currently in use.
+#' @param ... additional arguments, not currently in use.
 #'
 #' @details This function runs the following pipeline:
 ##' \itemize{
@@ -34,21 +35,18 @@
 ##' }
 ##'
 #' @examples
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#'
+#' @export
 pipeLIMMA<-function(counts, info, formula, block=NULL,
                     design=NA, use.qualityWeights=TRUE,
                     geneIDs=NA, getTopTable=FALSE, getEbayes=TRUE,
                     simplify=TRUE, verbose=TRUE, ...){
-
-  require("edgeR", quietly = TRUE, warn.conflicts = FALSE)
-  require("qvalue", quietly = TRUE, warn.conflicts = FALSE)
 
   if(is.null(block)) {
     useBlock=FALSE

@@ -1,5 +1,6 @@
 #' @title PCA of voom-transformed counts.
 #'
+#'
 #' @description
 #' \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
 #'
@@ -7,14 +8,12 @@
 #' @param info The experimental design information matrix
 #' @param ids A vector of the individual names
 #' @param plotit Logical, should the pca be plotted?
-#' @params ... additional arguments passed on to barplot, for example, the colors of bars
+#' @param ... additional arguments passed on to barplot, for example, the colors of bars
 #'
 #' @details This function uses the R function princomp to calculate principal components
 
 #' @return a dataframe with the experimental design data, merged with the 1st 3 principal component axes
 #' @examples
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
@@ -23,7 +22,7 @@
 #' pc <- voom2PCA(v=stats$voom[["E"]], info=info, ids=rownames(info),plotit=T)
 #' library(ggplot2)
 #' ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+geom_point()
-
+#' @export
 voom2PCA<-function(v, info, ids, plotit=TRUE,...){
 
   pc<-prcomp(t(v))

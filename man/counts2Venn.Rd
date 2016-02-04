@@ -33,9 +33,6 @@ given a binary significance classification matrix, run functions to produce venn
 if scaled, runs venneuler::venneuler venn diagrams. Otherwise, runs limma::vennCounts/vennDiagram
 }
 \examples{
-library(limmaDE2)
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
@@ -43,6 +40,5 @@ info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 sig<-makeBinarySig(x= stats$stats, what="p.value")
 counts2Venn(x=sig, cols=c(1,2), names=c("intercept","treatment"),colors=c("blue","darkred"),type="limma", legx=-3.3,legy=-3)
-
 }
 

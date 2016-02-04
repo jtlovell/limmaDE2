@@ -15,13 +15,13 @@ pqHists(x, what.p = "p.value", what.q = "q.value", alpha = 0.05,
 \item{what.q}{the name of the column containing q-values}
 
 \item{main}{The stem of the title, to which significance counts are attached}
+
+\item{...}{additional arguments passed on to hist, like the color of the bars}
 }
 \description{
 \code{pqHists} Make histograms of p-value and q-value distributions
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]

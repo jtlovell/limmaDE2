@@ -1,5 +1,6 @@
 #' @title P- and q-value distributions plotted side-by-side
 #'
+#'
 #' @description
 #' \code{pqHists} Make histograms of p-value and q-value distributions
 #'
@@ -7,11 +8,9 @@
 #' @param what.p the name of the column containing p-values
 #' @param what.q the name of the column containing q-values
 #' @param main The stem of the title, to which significance counts are attached
-#' @params ... additional arguments passed on to hist, like the color of the bars
+#' @param ... additional arguments passed on to hist, like the color of the bars
 #'
 #' @examples
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
@@ -20,7 +19,7 @@
 #' stats.fullmodel<-stats$stats
 #' pqHists(stats.fullmodel, what.p="treatmenttumor_p.value", what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
 #'
-
+#' @export
 pqHists<-function(x, what.p="p.value",what.q="q.value",alpha=0.05,main="significance distribution",...){
   par(mfrow=c(1,2))
   hist(x[,grep(what.p, colnames(x))], xlab="p.value",main=paste(main, "\n","n.pvalue < ",alpha," = ",sum(x[,grep(what.p, colnames(x))]<=alpha),sep=""),...)

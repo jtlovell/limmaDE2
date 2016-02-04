@@ -1,5 +1,6 @@
 #' @title Convert p-values to binary significance calls
 #'
+#'
 #' @description
 #' \code{makeBinarySig} Convert some sort of significance distribution to binary signifcance calls.
 #'
@@ -15,8 +16,6 @@
 #' the values have been transformed to binary
 #'
 #' @examples
-#' library(SimSeq)
-#' library(limmaDE2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]

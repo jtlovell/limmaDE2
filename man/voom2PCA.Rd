@@ -14,6 +14,8 @@ voom2PCA(v, info, ids, plotit = TRUE, ...)
 \item{ids}{A vector of the individual names}
 
 \item{plotit}{Logical, should the pca be plotted?}
+
+\item{...}{additional arguments passed on to barplot, for example, the colors of bars}
 }
 \value{
 a dataframe with the experimental design data, merged with the 1st 3 principal component axes
@@ -25,8 +27,6 @@ a dataframe with the experimental design data, merged with the 1st 3 principal c
 This function uses the R function princomp to calculate principal components
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]

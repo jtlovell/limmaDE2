@@ -30,8 +30,6 @@ Given a matrix with p/q values, this function greps for the string in "what" and
 either significant (1) or not (0). Esspecially useful for a dataset that has many p-value or q-value columns
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]

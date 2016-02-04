@@ -18,6 +18,8 @@ Smaller values lead to more groups and more sub heatmaps.}
 \item{calcMeans}{Logical, should means for each group be calculated? Simplifies plotting considerably.}
 
 \item{newIDs}{If calcMeans=FALSE, a vector of names for the columns in the heatmaps}
+
+\item{allHMtoo}{Should the complete heatmap be plotted in addition to the sub heatmaps?}
 }
 \value{
 a dataframe with the normalized means.
@@ -33,8 +35,6 @@ The dendrogram is split into groups using cuttree. The dendrogram is plotted, co
 are subsequently plotted.
 }
 \examples{
-library(SimSeq)
-library(limmaDE2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
