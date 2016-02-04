@@ -9,7 +9,7 @@
 #'
 #' @param counts A count matrix
 #' @param design A design matrix, usually created by a call from "model.matrix"
-#' @param contrast matrix A matrix of contrasts, usually created by a call
+#' @param contrast.matrix A matrix of contrasts, usually created by a call
 #' from limma:makeContrasts
 #' @param block A string that represents an individual that was repeatedly
 #' measured, if NULL, runs the analysis without a blocking / duplicate correlation factor
@@ -43,8 +43,8 @@
 #' @importFrom  edgeR calcNormFactors DGEList
 #' @importFrom  qvalue qvalue
 #' @importFrom  qdap multigsub
-#' @importFrom  ggplot2 ggplot
 #' @importFrom  reshape2 melt
+#' @import  ggplot2
 #' @export
 pipeLIMMA.contrasts<-function(counts, design, contrast.matrix,
                      block=NULL, printSig=TRUE, makePlots=TRUE, verbose=TRUE, ...){

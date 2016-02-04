@@ -149,5 +149,6 @@ pipeLIMMA<-function(counts, info, formula, block=NULL,
   tests.out2<-do.call(cbind, tests.out)
   all.out<-cbind(data.frame(out),tests.out2)
   colnames(all.out)<-tolower(colnames(all.out))
+  all.out<-all.out[,-which(colnames(all.out)=="id"),]
   return(list(stats=all.out, voom=v, lmfit=fit, countsSize=y, simpleStats=simple))
 }
