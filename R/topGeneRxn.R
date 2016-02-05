@@ -34,6 +34,7 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' @import  ggplot2
 #' @importFrom  reshape2 melt
+#' @importFrom  RColorBrewer brewer.pal
 #' @export
 topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, geneIDs=NULL,paletteChoice=NULL,
                      pointcols=c("darkred","forestgreen","cornflowerblue"),

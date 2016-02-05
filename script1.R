@@ -150,7 +150,7 @@ tp.mdwp<-topGeneRxn(v=v, info=info,
                     pointcols=c("darkred","forestgreen","skyblue"), paletteChoice=NULL,
                     xdat="order", coldat="Treatment", xlab="Mid-day Leaf Water Potential (MPa)")
 
-save(stats.fullmodel, stats.allests, lim.contrasts, pca, v,
-     stats.fullmodel.mdwp, stats.allests.mdwp, stats.fullmodel.order, stats.allests.order,stats.fullmodel.subtrt, stats.allests.subtrt,
-     file="/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/stats_output/tempe2012_allstats.RData")
+# save(stats.fullmodel, stats.allests, lim.contrasts, pca, v,
+#      stats.fullmodel.mdwp, stats.allests.mdwp, stats.fullmodel.order, stats.allests.order,stats.fullmodel.subtrt, stats.allests.subtrt,
+#      file="/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/stats_output/tempe2012_allstats.RData")
 
