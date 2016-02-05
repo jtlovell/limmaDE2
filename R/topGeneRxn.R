@@ -42,8 +42,8 @@
 topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, geneIDs=NULL,paletteChoice=NULL,
                      pointcols=c("darkred","forestgreen","cornflowerblue"),
                      ylab="voom normalized expression",
-                     xlab="phenotype", title="comparison of expression and phenotype",...){
-
+                     xlab=NULL, title="comparison of expression and phenotype",...){
+  if(is.null(xlab)) xlab<-xdat
   if(is.null(xdat) & is.null(coldat)) cat("either xdat or coldat must be provided \n")
   if(!is.null(pointcols) & !is.null(paletteChoice)) cat("both manual and palette colors requests, using palette \n")
 
