@@ -17,8 +17,8 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' stats.fullmodel<-stats$stats
-#' pqHists(stats.fullmodel, what.p="treatmenttumor_p.value",
-#'  what.q="treatmenttumor_q.value", main="main effect treatment", breaks=100)
+#' pqHists(stats.fullmodel, what.p="ebayesPvalue_treatmentTumor",
+#'  what.q="ebayesQvalue_treatmentTumor", main="main effect treatment", breaks=100)
 #'
 #' @export
 pqHists<-function(x, what.p="p.value",what.q="q.value",alpha=0.05,main="significance distribution",...){

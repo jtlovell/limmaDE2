@@ -28,9 +28,9 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL, getTopTable=T, getEbayes=T)
 #' stats<-stats$stats
-#' volcanoPlot(pval=stats$ebayes_treatmenttumor_p.value,
-#'             lfc=stats$tt_treatmenttumor_logfc,
-#'             sig=stats$ebayes_treatmenttumor_q.value,
+#' volcanoPlot(pval=stats$ebayesPvalue_treatmentTumor,
+#'             lfc=stats$treatmentTumor_logFC,
+#'             sig=stats$ebayesQvalue_treatmentTumor,
 #'             alpha=0.0005, pointcols=c("blue","grey"), pchs=c(4,6))
 #' @export
 volcanoPlot<-function(pval, lfc, sig, alpha=0.05,

@@ -27,15 +27,16 @@
 #' @examples
 #' data(kidney)
 #' counts<-kidney$counts
+#' set.seed(42)
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' stats.fullmodel<-stats$stats
-#' which.toplot<-which(stats.fullmodel$ebayes_treatmenttumor_q.value<=1e-20)
+#' which.toplot<-which(stats.fullmodel$ebayesQvalue_treatmentTumor<=1e-20)
 #' v<-stats$voom[["E"]]
 #' v.means<-voom2MeanHeatMaps(v=v[which.toplot,], grps=info$rep, thresh=21)
 #' @importFrom  gdata read.xls startsWith
-#' @importFrom  dendroextras color_clusters
+#' @importFrom  dendroextras colour_clusters
 #' @importFrom  Heatplus annHeatmap2
 #' @export
 voom2MeanHeatMaps<-function(v, grps=info$Treatment, thresh=7, calcMeans=T, newIDs=NA, allHMtoo=T){

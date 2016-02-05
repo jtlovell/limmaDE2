@@ -29,8 +29,8 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
 #' sig<-makeBinarySig(x= stats$stats, what="Pvalue")
-#' counts2Venn(x=sig, cols=c(1), names=c("intercept","treatment"),
-#'    colors=c("blue","darkred"),type="limma", legx=-3.3,legy=-3)
+#' counts2Venn(x=sig, cols=c(1), names=c("treatment"),
+#'    colors=c("blue"),type="limma", legx=-3.3,legy=-3)
 #' @importFrom  venneuler venneuler
 #' @export
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
@@ -83,10 +83,12 @@ counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0
   }else{
     vc<-vennCounts(x[,cols])
     vennDiagram(vc, names=names, circle.col=colors, cex=c(1.2,.8,.5),...)
-    areas<-sqrt(colSums(x[,cols])/pi)
-    areas<-areas/(max(areas)*.25)
-    legend(legx, legy, legend=colSums(x[,cols]), col=colors, pt.cex=areas, pch=1, bty="n",
-           cex=.5,xjust=-1,yjust=-1)
+    if(length(names)>1){
+      areas<-sqrt(colSums(x[,cols])/pi)
+      areas<-areas/(max(areas)*.25)
+      legend(legx, legy, legend=colSums(x[,cols]), col=colors, pt.cex=areas, pch=1, bty="n",
+             cex=.5,xjust=-1,yjust=-1)
+    }
   }
   par(mfrow=c(1,1))
 }
