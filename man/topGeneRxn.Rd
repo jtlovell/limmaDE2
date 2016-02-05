@@ -58,8 +58,5 @@ data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment + rep", block=NULL, getTopTable=T, getEbayes=T)
-stats<-stats$stats
-
 }
 

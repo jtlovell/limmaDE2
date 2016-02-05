@@ -32,7 +32,7 @@
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' @import  ggplot
+#' @import  ggplot2
 #' @importFrom  reshape2 melt
 #' @export
 topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, geneIDs=NULL,paletteChoice=NULL,

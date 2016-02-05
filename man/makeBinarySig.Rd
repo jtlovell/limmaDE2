@@ -38,8 +38,8 @@ p-value or q-value columns
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
-info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-sig<-makeBinarySig(x= stats$stats, what="Pvalue")
+### Not Run ### info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+### Not Run ### sig<-makeBinarySig(x= stats$stats, what="Pvalue")
 }
 
