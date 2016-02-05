@@ -30,11 +30,11 @@
 #' set.seed(42)
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' stats.fullmodel<-stats$stats
-#' which.toplot<-which(stats.fullmodel$ebayesQvalue_treatmentTumor<=1e-20)
-#' v<-stats$voom[["E"]]
-#' v.means<-voom2MeanHeatMaps(v=v[which.toplot,], grps=info$rep, thresh=21)
+#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#' ### Not Run ### stats.fullmodel<-stats$stats
+#' ### Not Run ### which.toplot<-which(stats.fullmodel$ebayesQvalue_treatmentTumor<=1e-20)
+#' ### Not Run ### v<-stats$voom[["E"]]
+#' ### Not Run ### v.means<-voom2MeanHeatMaps(v=v[which.toplot,], grps=info$rep, thresh=21)
 #' @importFrom  gdata read.xls startsWith
 #' @importFrom  dendroextras colour_clusters
 #' @importFrom  Heatplus annHeatmap2

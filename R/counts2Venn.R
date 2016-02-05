@@ -27,10 +27,10 @@
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' sig<-makeBinarySig(x= stats$stats, what="Pvalue")
-#' counts2Venn(x=sig, cols=c(1), names=c("treatment"),
-#'    colors=c("blue"),type="limma", legx=-3.3,legy=-3)
+#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#' ### Not Run ### sig<-makeBinarySig(x= stats$stats, what="Pvalue")
+#' ### Not Run ### counts2Venn(x=sig, cols=c(1), names=c("treatment"),
+#' ### Not Run ###    colors=c("blue"),type="limma", legx=-3.3,legy=-3)
 #' @importFrom  venneuler venneuler
 #' @export
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
