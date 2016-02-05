@@ -26,7 +26,7 @@
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' sig<-makeBinarySig(x= stats$stats, what="p.value")
+#' sig<-makeBinarySig(x= stats$stats, what="Pvalue")
 #' @export
 makeBinarySig<-function(x, alpha=0.05, what="q.value", na.include=TRUE, verbose=TRUE){
   sig.q<-data.matrix(x[,grep(what, colnames(x))])
@@ -35,7 +35,7 @@ makeBinarySig<-function(x, alpha=0.05, what="q.value", na.include=TRUE, verbose=
   }
   if(length(grep(what, colnames(x)))==1){
     if(na.include){
-      sig.q[,i][is.na(sig.q[,i])]<-1
+      sig.q[is.na(sig.q)]<-1
     }
     sig.q<-ifelse(sig.q<=alpha,1,0)
   }else{
