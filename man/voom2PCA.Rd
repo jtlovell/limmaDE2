@@ -4,7 +4,8 @@
 \alias{voom2PCA}
 \title{PCA of voom-transformed counts.}
 \usage{
-voom2PCA(v, info, ids, plotit = TRUE, ...)
+voom2PCA(v, info, ids, plotit = TRUE, pcas2return = 3,
+  plot.cols = "black", ...)
 }
 \arguments{
 \item{v}{Counts matrix, typically transformed by limma::voom.
@@ -16,7 +17,7 @@ Possibly output from pipelimma, in the slot "voom".}
 
 \item{plotit}{Logical, should the pca be plotted?}
 
-\item{...}{additional arguments passed on to barplot, for example, the colors of bars}
+\item{...}{additional arguments passed on to pairs, for example, the colors of bars}
 }
 \value{
 a dataframe with the experimental design data, merged with the 1st

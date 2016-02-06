@@ -8,6 +8,8 @@ rm(list=ls())
 library(devtools)
 install_github("jtlovell/limmaDE2")
 library(limmaDE2)
+library(ggplot2)
+library(RColorBrewer)
 # Note 1. to load this package, you need to have the following packages installed:
 # limma, SimSeq
 # Install by:
@@ -90,7 +92,9 @@ tp.mdwp<-topGeneRxn(v=v, info=info,
 #################################
 # Part 3: Run PCA
 #################################
-pca<-voom2PCA(v=v, info=info, ids=info$ID)
+pca<-voom2PCA(v=v, info=info, ids=info$ID, pcas2return=6,
+              plot.cols=brewer.pal(name="RdBu",n=6)[info$Treatment],
+              main="scatterplot matrix of Principal components, split by Treatment")
 ggplot(pca, aes(x=PC1, y=PC2, col=Treatment, alpha=Treatment))+
   theme_bw()+geom_point(size=4)
 
@@ -148,7 +152,7 @@ with(stats.allests.order,
 tp.mdwp<-topGeneRxn(v=v, info=info,
                     sig=stats.allests.order$ebayesQvalue_order,
                     pointcols=c("darkred","forestgreen","skyblue"), paletteChoice=NULL,
-                    xdat="order", coldat="Treatment", xlab="Mid-day Leaf Water Potential (MPa)")
+                    xdat="order", coldat="Treatment", xlab="Order of sample collection \n 1st @ 11:00, last @ 13:00")
 
 # save(stats.fullmodel, stats.allests, lim.contrasts, pca, v,
 #      stats.fullmodel.mdwp, stats.allests.mdwp, stats.fullmodel.order, stats.allests.order,stats.fullmodel.subtrt, stats.allests.subtrt,

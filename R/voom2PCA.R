@@ -9,7 +9,7 @@
 #' @param info The experimental design information matrix
 #' @param ids A vector of the individual names
 #' @param plotit Logical, should the pca be plotted?
-#' @param ... additional arguments passed on to barplot, for example, the colors of bars
+#' @param ... additional arguments passed on to pairs, for example, the colors of bars
 #'
 #' @details This function uses the R function princomp to calculate principal components
 
@@ -25,15 +25,15 @@
 #' ### Not Run ### library(ggplot2)
 #' ### Not Run ### ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+geom_point()
 #' @export
-voom2PCA<-function(v, info, ids, plotit=TRUE,...){
+voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...){
 
   pc<-prcomp(t(v))
   prop.var<-(pc$sdev)^2 / sum(pc$sdev^2)
-  dat<-data.frame(info, pc$x[,1:3])
+  dat<-data.frame(info, pc$x[,1:pcas2return])
   if(plotit){
     par(mfrow=c(2,2))
     bp<-barplot(prop.var[1:5], ylab="% Variance Explained",
-                main="distribution of PCA effects", xlab="PCA Axis",...)
+                main="distribution of PCA effects", xlab="PCA Axis")
     axis(1, at=bp[,1], labels=1:5, title)
     with(dat, plot(PC1,PC2, type="n", bty="n", main="PC1 vs. PC2"))
     with(dat, text(PC1,PC2, label=ids))
@@ -42,6 +42,9 @@ voom2PCA<-function(v, info, ids, plotit=TRUE,...){
     with(dat, plot(PC2,PC3, type="n", bty="n", main="PC2 vs. PC3"))
     with(dat, text(PC2,PC3, label=ids))
     par(mfrow=c(1,1))
+    pairs(dat[,grepl("PC", colnames(dat))], col=plot.cols,
+          pch=21,...) #to show color grouping
   }
+
   return(dat)
 }
