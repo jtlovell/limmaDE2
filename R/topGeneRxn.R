@@ -70,11 +70,10 @@ topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, 
   }
 
   if(identical(info[,coldat],info[,xdat]) | is.null(xdat) | is.null(coldat)){
-    df<-data.frame(as.character(info[,c(xdat)]), t(vs))
+    df<-data.frame(info[,c(xdat)], t(vs))
     colnames(df)[1]<-xdat
-    vtp<-melt(df, id.vars=c(xdat))
+    vtp<-melt(df, id.vars=c(xdat),factorsAsStrings=FALSE)
     vtp$value<-as.numeric(as.character(vtp$value))
-    vtp[,xdat] <- factor(vtp[,xdat], levels=levels(info[,xdat]))
     print(
       ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_boxplot(aes_string(col=xdat))+
         facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+
@@ -92,7 +91,6 @@ topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, 
     df<-data.frame(info[,c(xdat, coldat)], t(vs))
     vtp<-melt(df, id.vars=c(xdat,coldat))
     vtp$value<-as.numeric(as.character(vtp$value))
-    vtp$coldat=factor(vtp$coldat, levels=levels(info[,coldat]))
     print(
       ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_point(aes_string(col=coldat))+
         facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+

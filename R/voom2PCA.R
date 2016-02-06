@@ -28,7 +28,7 @@
 voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...){
 
   pc<-prcomp(t(v))
-  prop.var<-(pc$sdev)^2 / sum(pc$sdev^2)
+  prop.var<-round(((pc$sdev)^2 / sum(pc$sdev^2))*100,1)
   dat<-data.frame(info, pc$x[,1:pcas2return])
   if(plotit){
     par(mfrow=c(2,2))
@@ -43,7 +43,7 @@ voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...
     with(dat, text(PC2,PC3, label=ids))
     par(mfrow=c(1,1))
     pairs(dat[,grepl("PC", colnames(dat))], col=plot.cols,
-          pch=21,...) #to show color grouping
+          labels=paste(colnames(dat)[grepl("PC", colnames(dat))]," ",prop.var,"%",sep=""),...)
   }
 
   return(dat)

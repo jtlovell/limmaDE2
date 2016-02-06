@@ -94,9 +94,14 @@ tp.mdwp<-topGeneRxn(v=v, info=info,
 #################################
 pca<-voom2PCA(v=v, info=info, ids=info$ID, pcas2return=6,
               plot.cols=brewer.pal(name="RdBu",n=6)[info$Treatment],
-              main="scatterplot matrix of Principal components, split by Treatment")
-ggplot(pca, aes(x=PC1, y=PC2, col=Treatment, alpha=Treatment))+
-  theme_bw()+geom_point(size=4)
+              main="scatterplot matrix of Principal components, \n split by Treatment", pch=19, cex=.8)
+ggplot(pca, aes(x=PC1, y=PC2, col=Treatment))+
+  stat_ellipse(level=.50)+ggtitle("PCA plot with 50% CI ellipses")+
+  geom_hline(yintercept=0, lty=2)+ geom_vline(xintercept=0,lty=2)+
+  theme_bw()+geom_point(size=4)+scale_color_manual(values=brewer.pal(n=6,name="RdBu"))+
+  theme(panel.grid.major = element_blank() ,
+        panel.grid.minor = element_blank())
+
 
 #################################
 # Part 4: Subset to lines with physiology data
@@ -153,6 +158,10 @@ tp.mdwp<-topGeneRxn(v=v, info=info,
                     sig=stats.allests.order$ebayesQvalue_order,
                     pointcols=c("darkred","forestgreen","skyblue"), paletteChoice=NULL,
                     xdat="order", coldat="Treatment", xlab="Order of sample collection \n 1st @ 11:00, last @ 13:00")
+
+#################################
+# Part 7: Run GO enrichment analysis for a few sets of significant genes
+#################################
 
 # save(stats.fullmodel, stats.allests, lim.contrasts, pca, v,
 #      stats.fullmodel.mdwp, stats.allests.mdwp, stats.fullmodel.order, stats.allests.order,stats.fullmodel.subtrt, stats.allests.subtrt,

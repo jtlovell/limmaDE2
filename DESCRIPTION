@@ -20,5 +20,7 @@ Imports:
     reshape2,
     dendroextras,
     Heatplus,
-    gdata
+    gdata,
+    topGO,
+    RColorBrewer
 RoxygenNote: 5.0.1
