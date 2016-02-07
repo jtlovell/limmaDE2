@@ -20,7 +20,7 @@
 #' counts<-counts12
 #' test<-de2cca(info=info, counts=counts[1:1000,], formula="Treatment + MDWP + order")
 #' @importFrom  vegan cca
-#' @importFrom  dendroextras colour_clusters
+#' @importFrom  dendroextras colour_clusters set_leaf_colours
 #' @export
 de2cca<-function(info, counts, fast=TRUE, formula, palette=NULL,...){
   if(is.null(sample) &  nrow(counts)>10000 & fast){
