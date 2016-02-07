@@ -86,9 +86,10 @@ counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0
     if(length(names)>1){
       areas<-sqrt(colSums(x[,cols])/pi)
       areas<-areas/(max(areas)*.25)
-      legend(legx, legy, legend=colSums(x[,cols]), col=colors, pt.cex=areas, pch=1, bty="n",
-             cex=.5,xjust=-1,yjust=-1)
+      legend("bottomleft", legend=colSums(x[,cols]), col=colors, pt.cex=areas, pch=1, bty="n",
+             cex=.5, inset=c(.05,.05))
     }
   }
   par(mfrow=c(1,1))
 }
+
