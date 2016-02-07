@@ -27,7 +27,6 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
   geneNames <- names(geneID2GO)
   geneList <- factor(as.integer(geneNames %in% genes.of.interest))
   names(geneList) <- geneNames
-  GO2geneID <- inverseList(geneID2GO)
   GOdata <- new("topGOdata", ontology = "MF", allGenes = geneList,
                 annot = annFUN.gene2GO, gene2GO = geneID2GO)
 
