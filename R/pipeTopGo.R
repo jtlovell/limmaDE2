@@ -23,7 +23,6 @@
 #' @import  topGO
 #' @export
 pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=NULL){
-
   cat("compiling annotation and generating topGO data\n")
   geneNames <- names(geneID2GO)
   geneList <- factor(as.integer(geneNames %in% genes.of.interest))
@@ -40,8 +39,10 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
 
   pValue.classic <- score(resultFisher)
   n.sig<-sum(pValue.classic<=0.05)
+  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
   hist(pValue.classic, xlab="pvalue of Fisher exact test",
        main=paste("distribution of significance\nn.sig=",n.sig), breaks=20)
+  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
   if(is.null(nodes4table)){
     nodes4table<-n.sig
   }
@@ -54,5 +55,6 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
                      orderBy = 1, ranksOf = 1, topNodes = nodes4table)
   cat("printing graph to device ... ")
   showSigOfNodes(GOdata, score(resultFisher), firstSigNodes = nodes4graph, useInfo = 'all')
+  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
   return(allRes)
 }
