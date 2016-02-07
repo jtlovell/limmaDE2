@@ -3,6 +3,7 @@
 export(counts2Venn)
 export(de2cca)
 export(makeBinarySig)
+export(means4heatmap)
 export(pipeLIMMA)
 export(pipeTopGo)
 export(pqHists)
