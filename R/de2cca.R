@@ -23,7 +23,7 @@
 #' @importFrom  dendroextras colour_clusters
 #' @export
 de2cca<-function(info, counts, fast=TRUE, formula, palette=NULL,...){
-  if(is.null(sample) & is.null(sig) & nrow(counts)>10000 & fast){
+  if(is.null(sample) &  nrow(counts)>10000 & fast){
     cat("randomly subsampling genes to 12k, to speed up analysis\n")
     counts<-counts[sample(1:nrow(counts),10000),]
   }
