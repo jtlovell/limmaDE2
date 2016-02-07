@@ -27,8 +27,11 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
   geneNames <- names(geneID2GO)
   geneList <- factor(as.integer(geneNames %in% genes.of.interest))
   names(geneList) <- geneNames
-  GOdata <- new("topGOdata", ontology = "MF", allGenes = geneList,
-                annot = annFUN.gene2GO, gene2GO = geneID2GO)
+  GOdata <- new("topGOdata",
+                ontology = "MF",
+                allGenes = geneList,
+                annotationFun = annFUN.gene2GO,
+                gene2GO = geneID2GO)
 
   cat("\n----\nrunning the GO enrichment analysis by ... \n")
   cat("\t 1) the fisher classic method\n")
