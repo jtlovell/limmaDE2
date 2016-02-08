@@ -48,11 +48,9 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
   if(is.null(nodes4table)){
     nodes4table<-NULL
   }
-  n.sig<-sum(pValue.classic$fdr.pval<=0.05)
+  n.sig<-sum(pValue.classic$fdr.pval<=0.1)
   cat("n. significant GO terms =", n.sig,"\n")
-  if(is.null(nodes4graph)){
-    nodes4graph<-n.sig
-  }
+  if(n.sig>20) n.sig<-20
 
   cat("compiling results ... \n")
   allRes <- GenTable(GOdata, classicFisher = resultFisher,
@@ -69,7 +67,6 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
   }
 
   cat("printing graph to device ... ")
-  showSigOfNodes(GOdata, score(resultFisher), firstSigNodes = nodes4graph, useInfo = 'all')
-  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
+  showSigOfNodes(GOdata, score(resultFisher), firstSigNodes = n.sig)
   return(allRes)
 }
