@@ -49,6 +49,7 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
     nodes4table<-NULL
   }
   n.sig<-sum(pValue.classic$fdr.pval<=0.05)
+  cat("n. significant GO terms =", n.sig,"\n")
   if(is.null(nodes4graph)){
     nodes4graph<-n.sig
   }
