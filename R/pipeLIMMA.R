@@ -84,7 +84,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
     if(!is.null(contrast.matrix)){
       if(verbose) cat("fitting model to contrast matrix ... \n")
       fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
-      fit2 <- contrasts.fit(fit, contrast.matrix)
+      fit <- contrasts.fit(fit, contrast.matrix)
       fit <- eBayes(fit)
     }else{
       if(verbose) cat("fitting linear model ... \n")
@@ -106,17 +106,12 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   if(verbose) cat("processing statistics and calculating q-values ... \n")
 
   main.out<-data.frame(gene=geneIDs,
-                       sigma=fit$sigma,
-                       s2.post=fit$s2.post,
-                       Amean=fit$Amean,
-                       Fstat=fit$F,
-                       Fpvalue=fit$F.p.value,
-                       Fqvalue=tryCatch({
-                         qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue
-                       }, error = function(err) {
-                         p.adjust(fit$F.p.value, method="BH")
-                       })
-  )
+                  sigma=fit$sigma,
+                  s2.post=fit$s2.post,
+                  Amean=fit$Amean,
+                  Fstat=fit$F,
+                  Fpvalue=fit$F.p.value,
+                  Fqvalue=p.adjust(fit$F.p.value, method="BH"))
 
   ebayes.coef<-fit$coefficients
   colnames(ebayes.coef)<-paste("ebayesCoef_",colnames(ebayes.coef),sep="")
@@ -127,13 +122,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   ebayes.p<-fit$p.value
   colnames(ebayes.p)<-paste("ebayesPvalue_",colnames(ebayes.p),sep="")
 
-
-
-  ebayes.q<-apply(ebayes.p, 2, function(x) tryCatch({
-    qvalue(x, pi0.method="bootstrap")$qvalue
-  }, error = function(err) {
-    p.adjust(x, method="BH")
-  }))
+  ebayes.q<-apply(ebayes.p, 2, function(x) p.adjust(x, method="BH"))
   colnames(ebayes.q)<-gsub("ebayesPvalue_","ebayesQvalue_",colnames(ebayes.p))
 
   coefnames<-colnames(fit)
