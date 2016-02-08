@@ -106,12 +106,17 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   if(verbose) cat("processing statistics and calculating q-values ... \n")
 
   main.out<-data.frame(gene=geneIDs,
-                  sigma=fit$sigma,
-                  s2.post=fit$s2.post,
-                  Amean=fit$Amean,
-                  Fstat=fit$F,
-                  Fpvalue=fit$F.p.value,
-                  Fqvalue=qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue)
+                       sigma=fit$sigma,
+                       s2.post=fit$s2.post,
+                       Amean=fit$Amean,
+                       Fstat=fit$F,
+                       Fpvalue=fit$F.p.value,
+                       Fqvalue=tryCatch({
+                         qvalue(fit$F.p.value, pi0.method="bootstrap")$qvalue
+                       }, error = function(err) {
+                         p.adjust(fit$F.p.value, method="BH")
+                       })
+  )
 
   ebayes.coef<-fit$coefficients
   colnames(ebayes.coef)<-paste("ebayesCoef_",colnames(ebayes.coef),sep="")
@@ -122,7 +127,13 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   ebayes.p<-fit$p.value
   colnames(ebayes.p)<-paste("ebayesPvalue_",colnames(ebayes.p),sep="")
 
-  ebayes.q<-apply(ebayes.p, 2, function(x) qvalue(x)$qvalue)
+
+
+  ebayes.q<-apply(ebayes.p, 2, function(x) tryCatch({
+    qvalue(x, pi0.method="bootstrap")$qvalue
+  }, error = function(err) {
+    p.adjust(x, method="BH")
+  }))
   colnames(ebayes.q)<-gsub("ebayesPvalue_","ebayesQvalue_",colnames(ebayes.p))
 
   coefnames<-colnames(fit)
