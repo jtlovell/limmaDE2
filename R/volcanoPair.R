@@ -47,7 +47,7 @@ volcanoPair<-function(lfc1, lfc2, sig1, sig2, alpha=0.05,
   sigs<-ifelse(sig1 & sig2, "both",
                ifelse(sig1,"sig1",
                       ifelse(sig2,"sig2","NS")))
-  tab<-table(factor(sigs,levels=c("both","sig2","NS","sig1")))
+  tab<-table(factor(sigs,levels=c("both","sig1","sig2","NS")))
   plot(x=lfc1, y=lfc2, type="n", ...)
   lines(c(0,0),c(min(lfc2),max(lfc2)), lty=2, col="grey")
   lines(c(min(lfc1),max(lfc1)),c(0,0), lty=2, col="grey")

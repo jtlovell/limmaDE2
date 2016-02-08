@@ -32,15 +32,15 @@ voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...
   dat<-data.frame(info, pc$x[,1:pcas2return])
   if(plotit){
     par(mfrow=c(2,2))
-    bp<-barplot(prop.var[1:5], ylab="% Variance Explained",
-                main="distribution of PCA effects", xlab="PCA Axis")
-    axis(1, at=bp[,1], labels=1:5, title)
-    with(dat, plot(PC1,PC2, type="n", bty="n", main="PC1 vs. PC2"))
-    with(dat, text(PC1,PC2, label=ids))
-    with(dat, plot(PC1,PC3, type="n", bty="n", main="PC1 vs. PC3"))
-    with(dat, text(PC1,PC3, label=ids))
-    with(dat, plot(PC2,PC3, type="n", bty="n", main="PC2 vs. PC3"))
-    with(dat, text(PC2,PC3, label=ids))
+#     bp<-barplot(prop.var[1:5], ylab="% Variance Explained",
+#                 main="distribution of PCA effects", xlab="PCA Axis")
+#     axis(1, at=bp[,1], labels=1:5, title)
+#     with(dat, plot(PC1,PC2, type="n", bty="n", main="PC1 vs. PC2"))
+#     with(dat, text(PC1,PC2, label=ids))
+#     with(dat, plot(PC1,PC3, type="n", bty="n", main="PC1 vs. PC3"))
+#     with(dat, text(PC1,PC3, label=ids))
+#     with(dat, plot(PC2,PC3, type="n", bty="n", main="PC2 vs. PC3"))
+#     with(dat, text(PC2,PC3, label=ids))
     par(mfrow=c(1,1))
     pairs(dat[,grepl("PC", colnames(dat))], col=plot.cols,
           labels=paste(colnames(dat)[grepl("PC", colnames(dat))]," ",prop.var,"%",sep=""),...)

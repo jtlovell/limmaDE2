@@ -53,8 +53,8 @@ de2cca<-function(info, counts, fast=TRUE, formula, palette=NULL,...){
   names(cols)<-labels(hc)
   tp<-set_leaf_colours(hc, col=cols, col_to_set = "label")
 
-  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
-  plot(tp, main=paste("distance-based hclust dendrogram \n colored by",strsplit(formula," ")[[1]][1]))
+#   par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
+#   plot(tp, main=paste("distance-based hclust dendrogram \n colored by",strsplit(formula," ")[[1]][1]))
 
   form<-as.formula(paste("t(c) ~", formula))
   mod<-vegan::cca(form, data=i)

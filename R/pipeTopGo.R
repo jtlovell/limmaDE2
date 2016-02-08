@@ -68,5 +68,5 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
 
   cat("printing graph to device ... ")
   showSigOfNodes(GOdata, score(resultFisher), firstSigNodes = n.sig)
-  return(allRes)
+  return(list(stats=allRes, GOdata=GOdata, resultFisher=resultFisher))
 }

@@ -1,0 +1,143 @@
+---
+title: "Statistical Analysis of 2012 Expression data"
+author: "John T. Lovell"
+date: "8-February 2016"
+output:
+  html_document:
+    fig_caption: yes
+    fig_height: 8
+    fig_width: 8
+    toc: yes
+    toc_depth: 2
+  word_document: default
+---
+
+```{r, include=FALSE, warning=F}
+opar<-par(no.readonly = FALSE)
+require(mosaic)
+require(devtools)
+
+# install_github("jtlovell/limmaDE2")
+# install_github("jtlovell/PhyGenomicsData.PV2016")
+
+require(limmaDE2)
+require(PhyGenomicsData.PV2016)
+
+require(ggplot2)
+require(RColorBrewer)
+require(Heatplus)
+
+load("/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/temple2012_allstatsV2.RData")
+
+```
+
+```{r, include=FALSE, warning=F}
+trellis.par.set(theme=theme.mosaic())  
+require(knitr)
+opts_chunk$set(
+  tidy=FALSE, 
+  size="small"
+)
+```
+
+```{r, include=FALSE, warning=F}
+# load the data, rename for simplicity
+data(info12)
+data(counts12)
+info<-info12
+counts<-counts12
+```
+
+## Part 1: Experimental design information
+#### Number of individuals sampled in each treatment:
+```{r, echo=F}
+with(info, table(Treatment))
+```
+
+![Figure 1: Effect of experimental treatments on midday (MDWP) and predawn (PDWP) leaf water potential (MPa). Physiology data only collected for wet, dry and mean drought treatments.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/experimentalDesign_plots.png)
+
+
+## Part 2: Analysis of main effects 
+#### Model fit = 
+####     pipeLIMMA(..., block=info$Sub_Block, formula="~ Treatment")
+
+![Figure 2a: Heatmap of voom-normalized expression for each individual. Genes and individuals are clustered by similarity using a hierarchical clustering approach. Indivdiuals are annotated by their respective treatment. A black bar indicates the treatment level of each individual.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/maineffect_ind_heatmap.png)
+
+![Figure 2b: Heatmap of mean voom-normalized expression for each of the six drought treatments. Genes and treatments are clustered by similarity using a hierarchical clustering approach.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/maineffect_mean_heatmap.png)
+
+## Part 3: Analysis of effects from pairwise contrasts
+#### Model fit =
+#### contrast.matrix<-makeContrasts(
+####   f25th-flow, fmean-flow, fambient-flow, f75th-flow, fhigh-flow, fmean-f25th, fambient-f25th, fhigh-f25th, fambient-fmean, f75th-fmean, fhigh-fmean, f75th-fambient, fhigh-fambient, fhigh-f75th, levels=design)
+
+![Figure 3a: Four volcano plots demostrating the effect size and significance of contrasts with the high treatment.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/treatmentContrast_volcanoPlots.png)
+
+![Figure 3b: Distribution of voom-normalized expression counts for the 20 genes with the strongest effect of treatment. Boxplots are presented for each treatment independently. Note that in many panels, the main difference is between the drier treatments and the 75th%ile/high moisture treatments.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/rxnNorms_topContrastGenes_boxplots.png)
+
+![Figure 3c: Correlations between voom-normalized expression counts and midday leaf water potential for the 20 genes with the strongest effect of treatment.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/rxnNorms_topContrastGenes_scatterplotsMDWP.png)
+
+
+## Part 4: Multivariate effects via PCA
+
+![Figure 4a: Scatterplot matrix of PCA values. Percent variance explained accompanies the PC axis name along the diagonal. Points are colored by treatment following previous figures.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/PCA_allgenes_bytreatment_pairs.png)
+
+![Figure 4b: PC 1 and 2 groupings of individuals by drought treatments. Note that 75th and high are very similar, which low, 25th, and mean cluster together.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/PCA_allgenes_bytreatment_ggplot.png)
+
+![Figure 4c: Correlations between the principal component axes and leaf water potential collected at time of sampling. Note that the correlations are due, primarily to among treatment variance.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/PCA_allgenes_mdpw_response.png)
+
+## Part 5: The effect of MDWP
+
+#### Given that principal components are correlated with MDWP, it is possible that additional power could be gained by fitting water potential in the model
+![Figure 5a: Volcano plot of the effect of midday leaf water potential.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/mdwp_volcanoPlot.png)
+
+![Figure 5b: Reaction norms of the top 20 genes in terms of effect of MDWP on gene expression. Note strong correlations of voom normalized counts and leaf water potential WITHIN treatments, as well as among.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/rxnNorms_topMDWPGenes.png)
+
+![Figure 5c: Pairwise "volcano" plots, where each point indicates a individuals bivariate position in terms of log2 fold change due to both mid day leaf water potential and low vs. high contrast. Black points are not significant in either test, blue points are isgnificant only for MDWP tests, green points .](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/pairwiseVolcanoPlot_mdwp.high_v_lowContrast.png)
+
+![Figure 5d: The number of genes that are affected by both MDWP and high-vs-low treatment contrasts. Note that in this case, it is more powerful to make a contrast between low and high treatments.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/venn_trtContrast_vs_MDWP.png)
+
+![Figure 5e: Venn diagram presenting the information in 5d more simply.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/venn_trtContrast_vs_MDWP.png)
+
+![Figure 5f: Individual-level heatmap of normalized expression across all genes with a significant effect of MDWP (alpha <= 0.05). The MDWP value is plotted along the columns.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/mdwp_effect_heatmaps.png)
+
+## Part 6: The effect of sampling time on expression
+
+![Figure 6a: Throughout the 2h window of sampling, we found noticable effects of physiological responses to increased heat and vapor deficit. Sampling began at 11:00 and lasted until 13:30. The points presented here are a small subset of a much larger experiment that contained >400 individual plants. Also, note that, here, each individual was randomly selected for sampling. Stratification across treatments was not employed. As a result, more high water treatment plants were sampled earlier in the campaign, purely as a result of random chance.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/mdwp_samplingTime_effect.png)
+
+![Figure 6b: A set of 21 genes were differentially expressed in response to sampling time. Reaction across sampling time is plotted for 20 of those significant genes.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/rxn_norms_top20orderGenes.png)
+
+![Figure 6c: Depiction of data presented in 6b, using a heatmap.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/order_effect_heatmaps_alpha0.05.png)
+
+## Part 7: Multivariate analysis of treatment effects
+#### Here we employed a cannonical correspondence analysis to define the relative effects of sampling order, mid-day water potential and the treatments.
+
+![Figure 7a: Results of the CCA where the response variables are all genes differentially expressed relative to any of the experimental variables.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/cca_allgenes_withSigEffect.png)
+
+![Figure 7b: Results of the CCA where the response variables are a random subset of 10000 voom-normalized gene expression counts.](/Users/John/Desktop/dropbox/Switchgrass_PlantPhys/run_full_analysis/y2012/cca_random10kgenes.png)
+
+
+## Part 8: Analysis of GO terms
+#### Gene ontology term enrichment was accomplished in the R package topGO
+
+#### Table 8a: GO enrichment analysis for genes with significant differential expression in regards to the drought treatment. GO terms with FDR-corrected p-values <= 0.1 are presented
+
+```{r, echo=F}
+kable(hvl_go.stats[hvl_go.stats$fdr.pval<=0.1,], format = "markdown")
+```
+
+
+#### Table 8b: GO enrichment analysis for genes with significant differential expression in regards to the drought treatment. GO terms with uncorrected p-values <= 0.1 and annotations containing search words: "abiotic", "response" and "stress" are presented.
+
+```{r, echo=F}
+dat<-hvl_go.stats[grepl("abiotic",hvl_go.stats$Term) |
+                   grepl("response",hvl_go.stats$Term) |
+                     grepl("stress",hvl_go.stats$Term),]
+dat<-dat[dat$classicFisher<=0.1,]
+kable(dat, format = "markdown")
+```
+
+#### Table 8c: GO enrichment analysis for genes with significant differential expression in regards to sampling order. GO terms with FDR-corrected p-values <= 0.1 are presented
+
+```{r, echo=F}
+kable(order_go.stats[order_go.stats$fdr.pval<=0.1,], format = "markdown")
+```
