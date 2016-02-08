@@ -22,13 +22,14 @@
 #' test<-pipeTopGo(geneID2GO=geneID2GO, genes.of.interest=myInterestingGenes)
 #' @import  topGO
 #' @export
-pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=NULL){
+pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=NULL,
+                    toGrep=c("abiotic","stress")){
   cat("compiling annotation and generating topGO data\n")
   geneNames <- names(geneID2GO)
   geneList <- factor(as.integer(geneNames %in% genes.of.interest))
   names(geneList) <- geneNames
   GOdata <- new("topGOdata",
-                ontology = "MF",
+                ontology = "BP",
                 allGenes = geneList,
                 annotationFun = annFUN.gene2GO,
                 gene2GO = geneID2GO)
@@ -36,25 +37,36 @@ pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=
   cat("\n----\nrunning the GO enrichment analysis by ... \n")
   cat("\t 1) the fisher classic method\n")
   capture.output(resultFisher <- runTest(GOdata, algorithm = "classic", statistic = "fisher"), file="/dev/null")
-  cat("\t 2) the Kolmogorov-Smirnov (KS) classic method\n")
-  capture.output(resultKS <- runTest(GOdata, algorithm = "classic", statistic = "ks"), file="/dev/null")
+  # cat("\t 2) the Kolmogorov-Smirnov (KS) classic method\n")
+  # capture.output(resultKS <- runTest(GOdata, algorithm = "classic", statistic = "ks"), file="/dev/null")
 
-  pValue.classic <- score(resultFisher)
-  n.sig<-sum(pValue.classic<=0.05)
-  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
-  hist(pValue.classic, xlab="pvalue of Fisher exact test",
-       main=paste("distribution of significance\nn.sig=",n.sig), breaks=20)
-  par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
+  pValue.classic <- data.frame(pval=score(resultFisher))
+  pValue.classic$GO.ID=row.names(pValue.classic)
+  pValue.classic<-pValue.classic[pValue.classic$pval!=1,]
+  pValue.classic$fdr.pval=p.adjust(pValue.classic$pval)
+
   if(is.null(nodes4table)){
-    nodes4table<-n.sig
+    nodes4table<-NULL
   }
+  n.sig<-sum(pValue.classic$fdr.pval<=0.05)
   if(is.null(nodes4graph)){
     nodes4graph<-n.sig
   }
+
   cat("compiling results ... \n")
   allRes <- GenTable(GOdata, classicFisher = resultFisher,
-                     classicKS = resultKS,
-                     orderBy = 1, ranksOf = 1, topNodes = nodes4table)
+                     orderBy = 1, ranksOf = 1, topNodes=1000)
+  out<-merge(allRes,pValue.classic, by="GO.ID")
+  out<-out[order(out$fdr.pval),]
+
+  cat("top 10 GOs:\n")
+  print(head(out,n=10))
+
+  for(i in toGrep){
+    cat("stats for GO terms containing the term",i,"\n")
+    print(out[grep(i,out$Term),])
+  }
+
   cat("printing graph to device ... ")
   showSigOfNodes(GOdata, score(resultFisher), firstSigNodes = nodes4graph, useInfo = 'all')
   par(mfrow=c(1,1), mar=c(5, 4, 4, 2) + 0.1)
