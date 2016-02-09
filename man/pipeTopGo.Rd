@@ -5,7 +5,7 @@
 \title{Pipeline for GO enrichment analysis}
 \usage{
 pipeTopGo(geneID2GO, genes.of.interest, nodes4table = NULL,
-  nodes4graph = NULL)
+  nodes4graph = NULL, toGrep = c("abiotic", "stress"))
 }
 \arguments{
 \item{geneID2GO}{A go annotation (list). Each element is the name of a gene,

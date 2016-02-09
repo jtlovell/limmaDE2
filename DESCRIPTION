@@ -10,8 +10,7 @@ License: GPL-3
 LazyData: TRUE
 Depends:
     limma,
-    SimSeq,
-    topGO
+    SimSeq
 Imports:
     ggplot2,
     edgeR,
