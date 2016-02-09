@@ -34,12 +34,13 @@
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
 #' @import  ggplot2
 #' @importFrom  reshape2 melt
+#' @importFrom  plyr ddply
 #' @importFrom  RColorBrewer brewer.pal
 #' @export
 topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, geneIDs=NULL,paletteChoice=NULL,
                      pointcols=c("darkred","forestgreen","cornflowerblue"),
                      ylab="voom normalized expression",
-                     xlab=NULL, title="comparison of expression and phenotype",...){
+                     xlab=NULL, title="comparison of expression and phenotype",makeLinePlot=FALSE,...){
   if(is.null(xlab)) xlab<-xdat
   if(is.null(xdat) & is.null(coldat)) cat("either xdat or coldat must be provided \n")
   if(!is.null(pointcols) & !is.null(paletteChoice)) cat("both manual and palette colors requests, using palette \n")
@@ -68,17 +69,19 @@ topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, 
     best<-order(sig)[1:nsig]
     vs<-vs[best,]
   }
-
-  if(identical(info[,coldat],info[,xdat]) | is.null(xdat) | is.null(coldat)){
-    df<-data.frame(info[,c(xdat)], t(vs))
-    colnames(df)[1]<-xdat
-    vtp<-melt(df, id.vars=c(xdat),factorsAsStrings=FALSE)
+  if(makeLinePlot){
+    df<-data.frame(info[,c(xdat, coldat)], t(vs))
+    vtp<-melt(df, id.vars=c(xdat,coldat))
+    vtp2<-ddply(vtp,c(xdat,coldat, 'variable'), summarize, mean=mean(value),
+                lowCI=mean(value)-(sd(value)/sqrt(length(value))),
+                hiCI=mean(value)+(sd(value)/sqrt(length(value))))
     vtp$value<-as.numeric(as.character(vtp$value))
     print(
-      ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_boxplot(aes_string(col=xdat))+
+      ggplot(vtp2, aes_string(x=xdat, y="mean", group=coldat,col=coldat))+
+        geom_line()+
+        geom_errorbar(aes(ymax=hiCI, ymin=lowCI), width=.1)+
         facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+
         scale_color_manual(values=pointcols)+
-        stat_smooth(span = 200,se=F, lty=2, alpha=.2, lwd=.5, col="black")+
         theme_bw()+
         labs(x = xlab, y=ylab, title=title)+
         theme(panel.grid.major = element_blank() ,
@@ -88,21 +91,41 @@ topGeneRxn<-function(v, info, sig, xdat=NULL, coldat=NULL, alpha=0.05, nsig=20, 
               axis.text.x = element_text(angle = 90,vjust=.5, hjust=1))
     )
   }else{
-    df<-data.frame(info[,c(xdat, coldat)], t(vs))
-    vtp<-melt(df, id.vars=c(xdat,coldat))
-    vtp$value<-as.numeric(as.character(vtp$value))
-    print(
-      ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_point(aes_string(col=coldat))+
-        facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+
-        scale_color_manual(values=pointcols)+
-        stat_smooth(span = 200,se=F, lty=2, alpha=.2, lwd=.5, col="black")+
-        theme_bw()+
-        labs(x = xlab, y=ylab, title=title)+
-        theme(panel.grid.major = element_blank() ,
-              panel.grid.minor = element_blank(),
-              strip.text.x = element_text(size = 8),
-              strip.background = element_blank())
-    )
+    if(identical(info[,coldat],info[,xdat]) | is.null(xdat) | is.null(coldat)){
+      df<-data.frame(info[,c(xdat)], t(vs))
+      colnames(df)[1]<-xdat
+      vtp<-melt(df, id.vars=c(xdat),factorsAsStrings=FALSE)
+      vtp$value<-as.numeric(as.character(vtp$value))
+      print(
+        ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_boxplot(aes_string(col=xdat))+
+          facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+
+          scale_color_manual(values=pointcols)+
+          stat_smooth(span = 200,se=F, lty=2, alpha=.2, lwd=.5, col="black")+
+          theme_bw()+
+          labs(x = xlab, y=ylab, title=title)+
+          theme(panel.grid.major = element_blank() ,
+                panel.grid.minor = element_blank(),
+                strip.text.x = element_text(size = 8),
+                strip.background = element_blank(),
+                axis.text.x = element_text(angle = 90,vjust=.5, hjust=1))
+      )
+    }else{
+      df<-data.frame(info[,c(xdat, coldat)], t(vs))
+      vtp<-melt(df, id.vars=c(xdat,coldat))
+      vtp$value<-as.numeric(as.character(vtp$value))
+      print(
+        ggplot(vtp, aes_string(x=xdat, y="value"))+ geom_point(aes_string(col=coldat))+
+          facet_wrap(~variable, scales="free_y", nrow=5, ncol=4)+
+          scale_color_manual(values=pointcols)+
+          stat_smooth(span = 200,se=F, lty=2, alpha=.2, lwd=.5, col="black")+
+          theme_bw()+
+          labs(x = xlab, y=ylab, title=title)+
+          theme(panel.grid.major = element_blank() ,
+                panel.grid.minor = element_blank(),
+                strip.text.x = element_text(size = 8),
+                strip.background = element_blank())
+      )
+    }
   }
   return(vtp)
 }

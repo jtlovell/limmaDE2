@@ -8,7 +8,8 @@ topGeneRxn(v, info, sig, xdat = NULL, coldat = NULL, alpha = 0.05,
   nsig = 20, geneIDs = NULL, paletteChoice = NULL,
   pointcols = c("darkred", "forestgreen", "cornflowerblue"),
   ylab = "voom normalized expression", xlab = NULL,
-  title = "comparison of expression and phenotype", ...)
+  title = "comparison of expression and phenotype", makeLinePlot = FALSE,
+  ...)
 }
 \arguments{
 \item{v}{Voom-transformed (or similar) expression data}
