@@ -16,11 +16,13 @@
 #' @return a table with the significant (or top n) GO terms and a directed network
 #' of GO terms
 #' @examples
+#' library(topGO)
 #' data(geneID2GO)
 #' geneNames <- names(geneID2GO)
 #' myInterestingGenes <- sample(geneNames, 100)
 #' test<-pipeTopGo(geneID2GO=geneID2GO, genes.of.interest=myInterestingGenes)
-#' @import  topGO
+#' @import topGO
+#' @import PhyGenomicsData.PV2016
 #' @export
 pipeTopGo<-function(geneID2GO, genes.of.interest, nodes4table=NULL, nodes4graph=NULL,
                     toGrep=c("abiotic","stress")){

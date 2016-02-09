@@ -28,6 +28,7 @@ of GO terms
 Takes a vector of gene names and a topGO custom (or not) enrichment annotation.
 }
 \examples{
+library(topGO)
 data(geneID2GO)
 geneNames <- names(geneID2GO)
 myInterestingGenes <- sample(geneNames, 100)

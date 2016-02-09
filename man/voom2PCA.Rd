@@ -20,8 +20,8 @@ Possibly output from pipelimma, in the slot "voom".}
 \item{...}{additional arguments passed on to pairs, for example, the colors of bars}
 }
 \value{
-a dataframe with the experimental design data, merged with the 1st
-3 principal component axes
+a list containing a dataframe with the experimental design data, merged with the 1st
+3 principal component axes and a vector of %variance explained by PCA axes.
 }
 \description{
 \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts

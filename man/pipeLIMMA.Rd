@@ -7,7 +7,7 @@
 pipeLIMMA(counts, info, formula = NULL, contrast.matrix = NULL,
   block = NULL, design = NULL, use.qualityWeights = TRUE, geneIDs = NA,
   getTopTable = FALSE, getEbayes = TRUE, simplify = TRUE,
-  verbose = TRUE, ...)
+  verbose = TRUE, plotVoom = FALSE, ...)
 }
 \arguments{
 \item{counts}{A count matrix}
@@ -39,6 +39,8 @@ a traditional test of effects via limma::lmFit/ebayes.}
 \item{simplify}{Logical, return a element with the F-statistics from the main model?}
 
 \item{verbose}{Logical, return progress updates?}
+
+\item{plotVoom}{Logical, plot the voom fit? Defaults to FALSE}
 
 \item{...}{additional arguments, not currently in use.}
 }

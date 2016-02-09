@@ -36,8 +36,6 @@
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
   if(type=="both"){
     par(mfrow=c(2,1))
-  }else{
-    par(mfrow=c(1,1))
   }
   if(type %in% c("scaled","both")){
 
@@ -90,6 +88,5 @@ counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0
              cex=.5, inset=c(.05,.05))
     }
   }
-  par(mfrow=c(1,1))
 }
 

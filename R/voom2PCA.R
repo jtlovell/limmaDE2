@@ -13,8 +13,8 @@
 #'
 #' @details This function uses the R function princomp to calculate principal components
 
-#' @return a dataframe with the experimental design data, merged with the 1st
-#' 3 principal component axes
+#' @return a list containing a dataframe with the experimental design data, merged with the 1st
+#' 3 principal component axes and a vector of %variance explained by PCA axes.
 #' @examples
 #' data(kidney)
 #' counts<-kidney$counts
@@ -46,5 +46,5 @@ voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...
           labels=paste(colnames(dat)[grepl("PC", colnames(dat))]," ",prop.var,"%",sep=""),...)
   }
 
-  return(dat)
+  return(list(dat,prop.var))
 }

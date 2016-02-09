@@ -22,6 +22,7 @@
 #' @param getEbayes Logical, return ebayes statistics?
 #' @param simplify Logical, return a element with the F-statistics from the main model?
 #' @param verbose Logical, return progress updates?
+#' @param plotVoom Logical, plot the voom fit? Defaults to FALSE
 #' @param ... additional arguments, not currently in use.
 #'
 #' @details This function runs the following pipeline:
@@ -53,7 +54,7 @@
 pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL,
                     design=NULL, use.qualityWeights=TRUE,
                     geneIDs=NA, getTopTable=FALSE, getEbayes=TRUE,
-                    simplify=TRUE, verbose=TRUE, ...){
+                    simplify=TRUE, verbose=TRUE, plotVoom=FALSE, ...){
 
   if(is.null(block)) {
     useBlock=FALSE
@@ -73,10 +74,10 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
 
   if(use.qualityWeights){
     if(verbose) cat("running voom normalization correcting for quality weights ... \n")
-    v <- voomWithQualityWeights(y, design=design, plot = T)
+    v <- voomWithQualityWeights(y, design=design, plot = plotVoom)
   }else{
     if(verbose) cat("running voom normalization ... \n")
-    v <- voom(y, design=design, plot = T)
+    v <- voom(y, design=design, plot = plotVoom)
   }
   if(useBlock){
     if(verbose) cat("calculating duplicate correlation among replicates ... \n")
