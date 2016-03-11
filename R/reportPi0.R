@@ -20,7 +20,7 @@
 reportPi0<-function(ps){
   if(is.numeric(ps)){
     q<-round(qvalue(ps)$pi0,2)
-    n<-round((1-q)*length(x),0)
+    n<-round((1-q)*length(ps),0)
     return(c(q,n))
   }else{
     out<-sapply(ps, function(x) {
