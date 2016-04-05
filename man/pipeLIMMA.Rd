@@ -5,9 +5,9 @@
 \title{A pipeline for LIMMA.}
 \usage{
 pipeLIMMA(counts, info, formula = NULL, contrast.matrix = NULL,
-  block = NULL, design = NULL, use.qualityWeights = TRUE, geneIDs = NA,
-  getTopTable = FALSE, getEbayes = TRUE, simplify = TRUE,
-  verbose = TRUE, plotVoom = FALSE, ...)
+  block = NULL, design = NULL, use.qualityWeights = TRUE,
+  use.topTable = FALSE, geneIDs = NA, verbose = TRUE, plotVoom = FALSE,
+  ...)
 }
 \arguments{
 \item{counts}{A count matrix}
@@ -18,7 +18,7 @@ pipeLIMMA(counts, info, formula = NULL, contrast.matrix = NULL,
 model is not desired.}
 
 \item{contrast.matrix}{A matrix of contrasts, usually created by a call
-from limma:makeContrasts. Used only limma:contrast.fit is intended as the statistical
+from limma:makeContrasts. Used only when limma:contrast.fit is intended as the statistical
 modeling function. NULL values force a traditional test of effects via limma::lmFit/ebayes.}
 
 \item{block}{A string that represents an individual that was repeatedly measured,
@@ -30,13 +30,10 @@ a traditional test of effects via limma::lmFit/ebayes.}
 
 \item{use.qualityWeights}{Logical, run voom with quality weights or not?}
 
+\item{use.topTable}{Logical, report F-statistics across all factors? If true,
+a third element is returned called fstats.}
+
 \item{geneIDs}{The names of genes. If NA, use row names from counts matrix}
-
-\item{getTopTable}{Logical, return toptable statistics?}
-
-\item{getEbayes}{Logical, return ebayes statistics?}
-
-\item{simplify}{Logical, return a element with the F-statistics from the main model?}
 
 \item{verbose}{Logical, return progress updates?}
 
@@ -49,6 +46,7 @@ a list with 2 elements (if simple=TRUE)
 \itemize{
  \item{"stats"}{: the statsistics generated from ebayes and topTable}
  \item{"voom"}{: the voom normalized counts data}
+ \item{"fstats"}{: the toptable returned fstatsistics across all estimates of each factor}
 }
 }
 \description{

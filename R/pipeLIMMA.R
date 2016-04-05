@@ -12,15 +12,14 @@
 #' limma:contrast.fit is intended as the statistical modeling function. NULL values force
 #' a traditional test of effects via limma::lmFit/ebayes.
 #' @param contrast.matrix A matrix of contrasts, usually created by a call
-#' from limma:makeContrasts. Used only limma:contrast.fit is intended as the statistical
+#' from limma:makeContrasts. Used only when limma:contrast.fit is intended as the statistical
 #' modeling function. NULL values force a traditional test of effects via limma::lmFit/ebayes.
 #' @param block A string that represents an individual that was repeatedly measured,
 #' if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param use.topTable Logical, report F-statistics across all factors? If true,
+#' a third element is returned called fstats.
 #' @param use.qualityWeights Logical, run voom with quality weights or not?
 #' @param geneIDs The names of genes. If NA, use row names from counts matrix
-#' @param getTopTable Logical, return toptable statistics?
-#' @param getEbayes Logical, return ebayes statistics?
-#' @param simplify Logical, return a element with the F-statistics from the main model?
 #' @param verbose Logical, return progress updates?
 #' @param plotVoom Logical, plot the voom fit? Defaults to FALSE
 #' @param ... additional arguments, not currently in use.
@@ -39,6 +38,7 @@
 ##' \itemize{
 ##'  \item{"stats"}{: the statsistics generated from ebayes and topTable}
 ##'  \item{"voom"}{: the voom normalized counts data}
+##'  \item{"fstats"}{: the toptable returned fstatsistics across all estimates of each factor}
 ##' }
 ##'
 #' @examples
@@ -52,9 +52,47 @@
 #' @importFrom  qvalue qvalue
 #' @export
 pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL,
-                    design=NULL, use.qualityWeights=TRUE,
-                    geneIDs=NA, getTopTable=FALSE, getEbayes=TRUE,
-                    simplify=TRUE, verbose=TRUE, plotVoom=FALSE, ...){
+                    design=NULL, use.qualityWeights=TRUE,use.topTable=FALSE,
+                    geneIDs=NA, verbose=TRUE, plotVoom=FALSE, ...){
+
+  extractTopTable<-function(fit, formula){
+    n.effects<-nchar(formula)-nchar(gsub("+","",formula, fixed=T))+1
+    effectNames<-sapply(1:n.effects, function(x) {
+      out<-strsplit(formula,"[+]")[[1]][x]
+      out<-gsub(" ","",out, fixed=T); out<-gsub("~","",out, fixed=T); out<-gsub("*","_x_",out, fixed=T)
+      out})
+    maxTermInteraction<-max(sapply(effectNames, function(x) (nchar(x) - nchar(gsub("_x_","",x)))/3))
+    mainEffectNames<-effectNames[!grepl("_x_",effectNames)]
+    interactionNames<-effectNames[grepl("_x_",effectNames)]
+    n.interactions<-n.effects-n.main.effects
+    mainEffectInts<-lapply(interactionNames, function(x) strsplit(x,"_x_")[[1]][1:2])
+    mainEffectNamesWithInteractions<-mainEffectNames[sapply(mainEffectNames, function(x) grepl(x,interactionNames))]
+
+    if(maxTermInteraction>1) stop("use.topTable is not possible with greater than a 2-way interaction")
+    colids<-colnames(fit$p.value)
+    colidInt<-colids[grep(":",colids)]
+    colidMain<-colids[grep(":",colids, invert=T)]
+    ttColNames<-c("logFC",  "AveExpr",  "t",  "P.Value",  "adj.P.Val", "B", "F")
+    tt<-lapply(effectNames, function(i){
+      if(grepl("_x_", i)){
+        temp<-sapply(1:2, function(x) strsplit(i,"_x_")[[1]][x])
+        toget<-colidInt[grepl(temp[1], colidInt) & grepl(temp[2], colidInt)]
+        wh<-which(colids %in% toget)
+        tt<-topTable(fit[,wh],sort="none",n=Inf)
+      }else{
+        wh<-grep(i, colidMain)
+        tt<-topTable(fit[,wh],sort="none",n=Inf)
+      }
+      colnames(tt)[colnames(tt) %in% ttColNames]<-paste(i, colnames(tt)[colnames(tt) %in% ttColNames],sep="_")
+      tt$gene<-row.names(tt)
+      return(tt)
+    })
+    out<-merge(tt[[1]],tt[[2]],by="gene")
+    for(i in 3:length(tt)){
+      out<-merge(out,tt[[i]],by="gene")
+    }
+    return(out)
+  }
 
   if(is.null(block)) {
     useBlock=FALSE
@@ -84,12 +122,12 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
     if(!is.null(contrast.matrix)){
       if(verbose) cat("fitting model to contrast matrix ... \n")
-      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
+      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
       fit <- contrasts.fit(fit, contrast.matrix)
       fit <- eBayes(fit)
     }else{
       if(verbose) cat("fitting linear model ... \n")
-      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block))
+      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
       fit <- eBayes(fit[,-1])
     }
   }else{
@@ -105,14 +143,13 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
     }
   }
   if(verbose) cat("processing statistics and calculating q-values ... \n")
-
   main.out<-data.frame(gene=geneIDs,
-                  sigma=fit$sigma,
-                  s2.post=fit$s2.post,
-                  Amean=fit$Amean,
-                  Fstat=fit$F,
-                  Fpvalue=fit$F.p.value,
-                  Fqvalue=p.adjust(fit$F.p.value, method="BH"))
+                       sigma=fit$sigma,
+                       s2.post=fit$s2.post,
+                       Amean=fit$Amean,
+                       Fstat=fit$F,
+                       Fpvalue=fit$F.p.value,
+                       Fqvalue=p.adjust(fit$F.p.value, method="BH"))
 
   ebayes.coef<-fit$coefficients
   colnames(ebayes.coef)<-paste("ebayesCoef_",colnames(ebayes.coef),sep="")
@@ -136,6 +173,11 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   lfcs<-do.call(cbind, lfcs)
 
   all.out<-data.frame(main.out, lfcs, ebayes.coef, ebayes.t, ebayes.p, ebayes.q)
-
-  return(list(stats=all.out, voom=v))
+  if(use.topTable){
+    fstats<-extractTopTable(fit=fit, formula=formula)
+    fstats<-merge(data.frame(gene=geneIDs),fstats, by="gene")
+    return(list(stats=all.out, voom=v, fstats=fstats))
+  }else{
+    return(list(stats=all.out, voom=v))
+  }
 }
