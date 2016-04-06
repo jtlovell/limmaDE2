@@ -138,7 +138,6 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
       fit <- eBayes(fit[,-1])
     }
   }
-  fit<<-fit
   if(verbose) cat("processing statistics and calculating q-values ... \n")
   main.out<-data.frame(gene=geneIDs,
                        sigma=fit$sigma,
