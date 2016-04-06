@@ -1,0 +1,69 @@
+---
+title: "Demonstration of pipeLIMMA"
+author: "JT Lovell"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:
+
+- `pipeLIMMA` Run analyses of differnetial expression ()
+- `makeBinarySig` Find and count the number of significantly differentially expressed genes
+- `pqHists` Plot the distribution of P and FDR-corrected P (Q) values
+- `voom2PCA` Conduct principal component analyses on voom (or otherwise) normalized expression matrices
+- `volcanoPlot` Generate log2 foldchange vs. P-value volcano plots
+- `volcanoPair` Compare two sets of log2 fold changes, colored by p-values
+
+
+## Installation
+The limmaDE2 packages is not on CRAN and can only be installed from github. To install the package, make sure the `devtools` package is installed on your system:
+
+```{r}
+library(devtools)
+
+```
+
+
+Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))

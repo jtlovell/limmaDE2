@@ -38,7 +38,8 @@
 ##' \itemize{
 ##'  \item{"stats"}{: the statsistics generated from ebayes and topTable}
 ##'  \item{"voom"}{: the voom normalized counts data}
-##'  \item{"fstats"}{: the toptable returned fstatsistics across all estimates of each factor}
+##'  \item{"fstats"}{: if a formula is provided,
+##'  the toptable returned fstatsistics across all estimates of each factor}
 ##' }
 ##'
 #' @examples
@@ -73,12 +74,14 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
         temp<-sapply(1:2, function(x) strsplit(i,"_x_")[[1]][x])
         toget<-colidInt[grepl(temp[1], colidInt) & grepl(temp[2], colidInt)]
         wh<-which(colids %in% toget)
-        tt<-topTable(fit[,wh],sort="none",n=Inf)
+        tt<-topTableF(fit[,wh],sort="none",n=Inf,adjust.method="none")
       }else{
         wh<-grep(i, colidMain)
-        tt<-topTable(fit[,wh],sort="none",n=Inf)
+        tt<-topTableF(fit[,wh],sort="none",n=Inf,adjust.method="none")
       }
       tt<-tt[,colnames(tt) %in% ttColNames]
+      tt$adj.P.Val<-NULL
+      tt$Q.Value<-qvalue(tt$P.Value)$qvalue
       colnames(tt)<-paste(i, colnames(tt),sep="_")
       tt$gene<-row.names(tt)
       return(tt)
@@ -145,7 +148,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
                        Amean=fit$Amean,
                        Fstat=fit$F,
                        Fpvalue=fit$F.p.value,
-                       Fqvalue=p.adjust(fit$F.p.value, method="BH"))
+                       Fqvalue=qvalue(fit$F.p.value)$qvalue)
 
   ebayes.coef<-fit$coefficients
   colnames(ebayes.coef)<-paste("ebayesCoef_",colnames(ebayes.coef),sep="")
@@ -156,12 +159,12 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   ebayes.p<-fit$p.value
   colnames(ebayes.p)<-paste("ebayesPvalue_",colnames(ebayes.p),sep="")
 
-  ebayes.q<-apply(ebayes.p, 2, function(x) p.adjust(x, method="BH"))
+  ebayes.q<-apply(ebayes.p, 2, function(x) qvalue(x)$qvalue)
   colnames(ebayes.q)<-gsub("ebayesPvalue_","ebayesQvalue_",colnames(ebayes.p))
 
   coefnames<-colnames(fit)
   lfcs<-lapply(coefnames, function(x) {
-    tt<-topTable(fit, coef=x, p.value=1, number=100000)
+    tt<-topTable(fit, coef=x,sort="none",n=Inf)
     tt<-tt[,c("logFC","AveExpr")]
     colnames(tt)<-paste(x,colnames(tt),sep="_")
     tt<-tt[match(geneIDs, row.names(tt)),]
@@ -169,11 +172,13 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   lfcs<-do.call(cbind, lfcs)
 
   all.out<-data.frame(main.out, lfcs, ebayes.coef, ebayes.t, ebayes.p, ebayes.q)
-  if(use.topTable){
+
+  if(is.null(formula)){
+    return(list(stats=all.out, voom=v))
+  }else{
     fstats<-extractTopTable(fit=fit, formula=formula)
     fstats<-merge(data.frame(gene=geneIDs),fstats, by="gene")
+    fstats<-fstats[,-grep("AveExpr", colnames(fstats))]
     return(list(stats=all.out, voom=v, fstats=fstats))
-  }else{
-    return(list(stats=all.out, voom=v))
   }
 }

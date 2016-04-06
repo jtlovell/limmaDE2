@@ -46,7 +46,8 @@ a list with 2 elements (if simple=TRUE)
 \itemize{
  \item{"stats"}{: the statsistics generated from ebayes and topTable}
  \item{"voom"}{: the voom normalized counts data}
- \item{"fstats"}{: the toptable returned fstatsistics across all estimates of each factor}
+ \item{"fstats"}{: if a formula is provided,
+ the toptable returned fstatsistics across all estimates of each factor}
 }
 }
 \description{
