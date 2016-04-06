@@ -2,12 +2,20 @@
 title: "Demonstration of limmaDE2"
 author: "JT Lovell"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  html_document:
+    toc: true
+    theme: united
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6,echo=TRUE, warning=FALSE, message=FALSE)
+```
+
 
 The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:
 
@@ -21,12 +29,30 @@ The R package limmaDE2 contains a set of functions designed to make running diff
 
 
 ## Installation
-The limmaDE2 packages is not on CRAN and can only be installed from github. Make sure the `devtools` package is installed on your system. The limmaDE2 package also requires several other R packages to be installed, including  `limma`,`SimSeq`, `plyr`, and `vegan`. To install:
+The limmaDE2 packages is not on CRAN and can only be installed from github. Make sure the `devtools` package is installed on your system. The limmaDE2 package also requires several other R packages to be installed. These packages have functions upon which limmaDE2 depends:
 
-```{r global_options, include=FALSE}
-knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+- `limma` contains all of the basic statistical elements that are called here.
+- `SimSeq` permits simulation of RNA-seq data
+- `plyr` summarize and manipulate lists and dataframes
+- `vegan` some distance-based methods
+- `Heatplus` heatmap plotting
+- `topGO` gene ontology (GO) analysis
+- `qvalue` fdr-corrected p-values
+
+If these are not on your system, run the following command in R:
+```{r, eval=FALSE}
+install.packages(c("plyr","vegan"))
+
+source("https://bioconductor.org/biocLite.R")
+biocLite(c("limma","SimSeq","Heatplus","topGO","qvalue"))
 ```
 
+Also, for this tutorial, you will need a few additional packages.
+```{r, eval=FALSE}
+install.packages(c("ggplot2","reshape2","hexbin"))
+```
+
+To install limmaDE2:
 ```{r}
 library(devtools)
 install_github("jtlovell/limmaDE2")
@@ -39,6 +65,12 @@ install_github("jtlovell/PhyGenomicsData.PV2016")
 library(PhyGenomicsData.PV2016)
 ```
 
+Load all packages that will be needed for the tutorial:
+```{r}
+library("ggplot2")
+library("reshape2")
+library("hexbin")
+```
 ## Importing data and checking
 For limmaDE2 to work, two matrices are needed:
 - `counts`: Raw transcript abundance counts
@@ -55,7 +87,7 @@ Here, info12 and counts12 come from a dataset where the AP13 switchgrass genotyp
 In all statistical analyses, it is important to set the levels of the experimental factors. This is esspecially true in linear modelling, such as limma, where levels are tested against the base level. Here, we set the "high" treatment as the base. 
 ```{r}
 info12$Treatment <- factor(info12$Treatment,
-                           levels = c("high","75th","ambient","mean","25th","low"))
+                           levels = c("high", "75th", "ambient", "mean", "25th", "low"))
 ```
 
 ## Basic analysis of differential expression
@@ -74,72 +106,129 @@ stats <- pipeLIMMA(counts = counts12,
 
 `pipeLIMMA` returns three elements: `stats`, `voom` and `fstats`. These are the statistical output of the limma functions: `eBayes`, `voom` and `topTableF`. Inspect the top few rows and columns of each.
 
-voom12 <- stats$voom[["E"]]
-stats12.model1 <- stats$stats
-- eBayes linear model statistics
+- `stats`: eBayes linear model statistics
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$stats[1:6,1:6])
 ```
 
-- voom normalized expression matrix
+- `voom`: normalized expression matrix
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$voom[["E"]][1:6,1:6])
 ```
 
-- F-statistics for each factor in the model, in this case, just treatment
+- `fstats`: F-statistics for each factor in the model, in this case, just treatment
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$fstats[1:6,])
 ```
 
 ## Count the number of significantly differentially expressed genes
-The function `makeBinarySig`
+The function `makeBinarySig` looks for a provided string (e.g. "Q.Value") and outputs a matrix with whether or not those columns have values <= the provided alpha
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+```{r}
+lmStats <- stats$stats
+sigs <- makeBinarySig(lmStats, what = "Qvalue", alpha = 0.05)
+```
 
+## Make a volcano plot of the results
+Volcano plots are a good way to look at the differences between two experimental levels. Here, we compare the extent of differential expression between the "high" treatment to the "low" treatment. 
+```{r}
+with(lmStats, volcanoPlot(pval = ebayesPvalue_Treatmentlow,
+                          lfc = Treatmentlow_logFC,
+                          sig = ebayesQvalue_Treatmentlow,
+                          main = "high vs. low treatment Volcano Plot", 
+                          bty = "n"))
+```
 
+Another option to make volcano plots is by hex densities... this is a good approach if you want to keep the files sizes small, or if you have many plots to make at once. To accomplish this approach, use `ggplot2`. Here, we compare the extent of differential expression between the "high" treatment and the "low","25th","mean" and "75th" treatments. 
+To plot all contrasts simultaneously, first transform the statistics, so that they are in the "long" format using the `reshape2` package's `melt` function. 
+```{r}
+lmStatsM.long.lfc <- melt(lmStats, 
+                          measure.vars = colnames(lmStats)[grep("logFC", colnames(lmStats))])
+lmStatsM.long.p <- melt(lmStats, 
+                        measure.vars = colnames(lmStats)[grep("Pvalue", colnames(lmStats))])
+lmStatsM.long.q <- melt(lmStats, 
+                        measure.vars = colnames(lmStats)[grep("Qvalue", colnames(lmStats))])
+toHex<-data.frame(lmStatsM.long.lfc[, c("variable","value")],
+                  lmStatsM.long.p[, "value"],
+                  lmStatsM.long.q[, "value"])
+colnames(toHex) <- c("contrast","lfc","p","q")
+ggplot(toHex, aes(x = lfc, y=-log10(p), fill = ifelse(q <= 0.05,"sig","NS"))) +
+  stat_binhex(bins=100) + 
+  facet_wrap(~contrast) +
+  scale_fill_manual(values=c("grey","darkred"), guide = FALSE) +
+  labs(x = "log2 Fold change (Genotype") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        strip.background = element_blank())
+```
 
+## Calculating differential expression with a blocking factor
+Often, it is important to correct for spatial designs, or repeated measures on single individuals. In this case, we have a split plot design, so we can correct for this treatment the sub block as a blocking variable
+```{r}
+stats <- pipeLIMMA(counts = counts12, 
+                   info = info12, 
+                   block = as.factor(info12$Sub_Block), 
+                   formula = "~ Treatment")
+voom <- stats$voom[["E"]]
+```
+
+Such approaches can reduce the residual variance and improve the ability to detect differential expression. 
+Here is the original model n. significance:
+```{r}
+sigs <- makeBinarySig(lmStats, what = "Qvalue", alpha = 0.05) 
+```
+And with the sub-plot blocking factor:
+```{r}
+lmStats.block <- stats$stats
+sigs <- makeBinarySig(lmStats.block, what = "Qvalue", alpha = 0.05) 
+```
+
+## Calculating differential expression using specific contrasts
+Sometimes, it may make more sense to use specific contrasts to test for differential expression. For example, let's say we are interested in how different the "high" and "75th" treatments are from the "mean" and "low" treatments. 
+First, we need to construct a contrast matrix. In this case, without an intercept. Also, it is good practice to make the column names as short as possibe, while not starting with a number. 
+
+```{r}
+design <- with(info12, model.matrix(~ 0 + Treatment))
+colnames(design) <- gsub("Treatment", "f", colnames(design))
+contrast.matrix <- makeContrasts(
+  f75th - flow, fhigh - flow,  f75th-fmean, fhigh-fmean, 
+  levels = design)
+```
+
+Then, fit the model with a contrast matrix as the design, overriding the formula argument. 
 ```{r}
 stats <- pipeLIMMA(counts = counts12, 
                    info = info12, 
                    block = info12$Sub_Block, 
-                   formula = "~ Treatment")
+                   design = design, 
+                   contrast.matrix = contrast.matrix)
+lmStats.contrast <- stats$stats
+sigs <- makeBinarySig(lmStats.contrast, what = "Qvalue", alpha = 0.05) 
 ```
 
+## Principal component analysis of gene expression
+It is often a good idea to get an idea of how the individuals (libraries) are structured - how similar are they to eachother. Principal component analyses allow for this kind of inference. 
 
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+pca12 <- voom2PCA(v=voom, info = info12, ids = info12$id, pcas2return = 6)
+pca12.var <- pca12[[2]]
+pca12 <- pca12[[1]]
+gcols <- c("darkblue", "blue", "gold", "green", "pink", "red")
+ggplot(pca12, aes(x = PC1, y = PC2, col = Treatment)) +
+  geom_vline(xintercept = 0, lty = 2)+
+  geom_hline(yintercept = 0, lty = 2)+
+  geom_point() +
+  theme_bw() +
+  scale_color_manual(values = gcols) +
+  scale_shape_manual(values = gpchs) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        strip.background = element_blank()) +
+  stat_ellipse(level = 0.50) +
+  labs(x = paste("PCA1 (", pca12.var[1],"%)", sep = ""),
+       y = paste("PCA2 (", pca12.var[2],"%)", sep = ""),
+       title = "PCA analysis of voom-normalized expression")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+For more information, visit lovelleeb.weebly.com/analytics
