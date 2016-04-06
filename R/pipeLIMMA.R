@@ -62,10 +62,6 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
       out<-gsub(" ","",out, fixed=T); out<-gsub("~","",out, fixed=T); out<-gsub("*","_x_",out, fixed=T)
       out})
     maxTermInteraction<-max(sapply(effectNames, function(x) (nchar(x) - nchar(gsub("_x_","",x)))/3))
-    # mainEffectNames<-effectNames[!grepl("_x_",effectNames)]
-    # interactionNames<-effectNames[grepl("_x_",effectNames)]
-    # mainEffectInts<-lapply(interactionNames, function(x) strsplit(x,"_x_")[[1]][1:2])
-    # mainEffectNamesWithInteractions<-mainEffectNames[sapply(mainEffectNames, function(x) grepl(x,interactionNames))]
 
     if(maxTermInteraction>1) stop("use.topTable is not possible with greater than a 2-way interaction")
     colids<-colnames(fit$p.value)
@@ -77,12 +73,13 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
         temp<-sapply(1:2, function(x) strsplit(i,"_x_")[[1]][x])
         toget<-colidInt[grepl(temp[1], colidInt) & grepl(temp[2], colidInt)]
         wh<-which(colids %in% toget)
-        tt<-topTable(fit[,wh],sort="none",n=Inf)
+        tt<-topTable(fit[,wh],sort="none",n=Inf, eb=fit)
       }else{
         wh<-grep(i, colidMain)
-        tt<-topTable(fit[,wh],sort="none",n=Inf)
+        tt<-topTable(fit[,wh],sort="none",n=Inf, eb=fit)
       }
-      colnames(tt)[colnames(tt) %in% ttColNames]<-paste(i, colnames(tt)[colnames(tt) %in% ttColNames],sep="_")
+      tt<-tt[,colnames(tt) %in% ttColNames]
+      colnames(tt)<-paste(i, colnames(tt),sep="_")
       tt$gene<-row.names(tt)
       return(tt)
     })
