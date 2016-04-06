@@ -12,7 +12,7 @@
 
 <meta name="date" content="2016-04-06" />
 
-<title>Demonstration of pipeLIMMA</title>
+<title>Demonstration of limmaDE2</title>
 
 
 
@@ -70,20 +70,38 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <div id="header">
-<h1 class="title">Demonstration of pipeLIMMA</h1>
+<h1 class="title">Demonstration of limmaDE2</h1>
 <h4 class="author"><em>JT Lovell</em></h4>
 <h4 class="date"><em>2016-04-06</em></h4>
 </div>
 
 
-<p>Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The <code>html_vignette</code> output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The <code>html_vignette</code> format:</p>
+<p>The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:</p>
 <ul>
-<li>Never uses retina figures</li>
-<li>Has a smaller default figure size</li>
-<li>Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style</li>
+<li><code>pipeLIMMA</code> Run analyses of differnetial expression in LIMMA.</li>
+<li><code>makeBinarySig</code> Find and count the number of significantly differentially expressed genes</li>
+<li><code>pqHists</code> Plot the distribution of P and FDR-corrected P (Q) values</li>
+<li><code>voom2PCA</code> Conduct principal component analyses on voom (or otherwise) normalized expression matrices</li>
+<li><code>volcanoPlot</code> Generate log2 foldchange vs. P-value volcano plots</li>
+<li><code>volcanoPair</code> Compare two sets of log2 fold changes, colored by p-values</li>
+<li><code>pipeDESeq2</code> Runs an analysis of differential expression similar to that of pipeLIMMA, except through the DESeq2 package.</li>
 </ul>
-<div id="vignette-info" class="section level2">
-<h2>Vignette Info</h2>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>The limmaDE2 packages is not on CRAN and can only be installed from github. Make sure the <code>devtools</code> package is installed on your system. The limmaDE2 package also requires several other R packages to be installed, including <code>limma</code>,<code>SimSeq</code>, <code>plyr</code>, and <code>vegan</code>. To install:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="st">&quot;jtlovell/limmaDE2&quot;</span>)
+<span class="kw">library</span>(limmaDE2)</code></pre></div>
+<p>A data package <code>PhyGenomicsData.PV2016</code> accompanies limmaDE2 and contains datasets needed to run this tutorial.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install_github</span>(<span class="st">&quot;jtlovell/PhyGenomicsData.PV2016&quot;</span>)
+<span class="kw">library</span>(PhyGenomicsData.PV2016)</code></pre></div>
+</div>
+<div id="importing-data-and-checking" class="section level2">
+<h2>Importing data and checking</h2>
+<p>For limmaDE2 to work, two matrices are needed: - <code>counts</code>: Raw transcript abundance counts - <code>info</code>: Experimental design information</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(info12)
+<span class="kw">data</span>(counts12)
+info12$Treatment &lt;-<span class="st"> </span><span class="kw">factor</span>(info12$Treatment,<span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;high&quot;</span>,<span class="st">&quot;75th&quot;</span>,<span class="st">&quot;ambient&quot;</span>,<span class="st">&quot;mean&quot;</span>,<span class="st">&quot;25th&quot;</span>,<span class="st">&quot;low&quot;</span>))</code></pre></div>
 <p>Note the various macros within the <code>vignette</code> section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the <code>title</code> field and the <code>\VignetteIndexEntry</code> to match the title of your vignette.</p>
 </div>
 <div id="styles" class="section level2">

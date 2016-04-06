@@ -1,5 +1,5 @@
 ---
-title: "Demonstration of pipeLIMMA"
+title: "Demonstration of limmaDE2"
 author: "JT Lovell"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -11,24 +11,100 @@ vignette: >
 
 The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:
 
-- `pipeLIMMA` Run analyses of differnetial expression ()
+- `pipeLIMMA` Run analyses of differnetial expression in LIMMA. 
 - `makeBinarySig` Find and count the number of significantly differentially expressed genes
 - `pqHists` Plot the distribution of P and FDR-corrected P (Q) values
 - `voom2PCA` Conduct principal component analyses on voom (or otherwise) normalized expression matrices
 - `volcanoPlot` Generate log2 foldchange vs. P-value volcano plots
 - `volcanoPair` Compare two sets of log2 fold changes, colored by p-values
+- `pipeDESeq2` Runs an analysis of differential expression similar to that of pipeLIMMA, except through the DESeq2 package. 
 
 
 ## Installation
-The limmaDE2 packages is not on CRAN and can only be installed from github. To install the package, make sure the `devtools` package is installed on your system:
+The limmaDE2 packages is not on CRAN and can only be installed from github. Make sure the `devtools` package is installed on your system. The limmaDE2 package also requires several other R packages to be installed, including  `limma`,`SimSeq`, `plyr`, and `vegan`. To install:
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
 
 ```{r}
 library(devtools)
-
+install_github("jtlovell/limmaDE2")
+library(limmaDE2)
 ```
 
+A data package `PhyGenomicsData.PV2016` accompanies limmaDE2 and contains datasets needed to run this tutorial.
+```{r}
+install_github("jtlovell/PhyGenomicsData.PV2016")
+library(PhyGenomicsData.PV2016)
+```
+
+## Importing data and checking
+For limmaDE2 to work, two matrices are needed:
+- `counts`: Raw transcript abundance counts
+- `info`: Experimental design information
+These two matrices must match exactly, where each row in the `info` matrix corresponds to each column in `counts`. For best performance, the name of each gene should be stored in the rownames of the counts matrix. 
+
+```{r}
+data(info12)
+data(counts12)
+```
+
+Here, info12 and counts12 come from a dataset where the AP13 switchgrass genotype was cloned and planted under a rain-exclusion shelter. Six treatment levels were applied. Relevant information about this experiment is in a manuscript in review. Contact `johntlovell@gmail.com` for more information. 
+
+In all statistical analyses, it is important to set the levels of the experimental factors. This is esspecially true in linear modelling, such as limma, where levels are tested against the base level. Here, we set the "high" treatment as the base. 
+```{r}
+info12$Treatment <- factor(info12$Treatment,
+                           levels = c("high","75th","ambient","mean","25th","low"))
+```
+
+## Basic analysis of differential expression
+For the purposes of this tutorial, we will use only the first 1000 genes in the counts matrix. This will speed up all downstream analyses.
+```{r}
+counts12<-counts12[1:1000,]
+```
+
+To test the plasticity (differential expression) of all genes across the six treatments:
+```{r}
+stats <- pipeLIMMA(counts = counts12, 
+                   info = info12, 
+                   block = NULL, 
+                   formula = "~ Treatment")
+```
+
+`pipeLIMMA` returns three elements: `stats`, `voom` and `fstats`. These are the statistical output of the limma functions: `eBayes`, `voom` and `topTableF`. Inspect the top few rows and columns of each.
+
+voom12 <- stats$voom[["E"]]
+stats12.model1 <- stats$stats
+- eBayes linear model statistics
+```{r, echo=FALSE, results='asis'}
+knitr::kable(stats$stats[1:6,1:6])
+```
+
+- voom normalized expression matrix
+```{r, echo=FALSE, results='asis'}
+knitr::kable(stats$voom[["E"]][1:6,1:6])
+```
+
+- F-statistics for each factor in the model, in this case, just treatment
+```{r, echo=FALSE, results='asis'}
+knitr::kable(stats$fstats[1:6,])
+```
+
+## Count the number of significantly differentially expressed genes
+The function `makeBinarySig`
 
 Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+
+
+```{r}
+stats <- pipeLIMMA(counts = counts12, 
+                   info = info12, 
+                   block = info12$Sub_Block, 
+                   formula = "~ Treatment")
+```
+
 
 ## Styles
 

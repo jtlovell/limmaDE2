@@ -86,9 +86,13 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
       tt$gene<-row.names(tt)
       return(tt)
     })
-    out<-merge(tt[[1]],tt[[2]],by="gene")
-    for(i in 3:length(tt)){
-      out<-merge(out,tt[[i]],by="gene")
+    if(length(tt)>1){
+      out<-merge(tt[[1]],tt[[2]],by="gene")
+      for(i in 3:length(tt)){
+        out<-merge(out,tt[[i]],by="gene")
+      }
+    }else{
+      out<-tt[[1]]
     }
     return(out)
   }
