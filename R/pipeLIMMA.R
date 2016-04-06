@@ -73,10 +73,10 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
         temp<-sapply(1:2, function(x) strsplit(i,"_x_")[[1]][x])
         toget<-colidInt[grepl(temp[1], colidInt) & grepl(temp[2], colidInt)]
         wh<-which(colids %in% toget)
-        tt<-topTable(fit[,wh],sort="none",n=Inf, eb=fit)
+        tt<-topTable(fit[,wh],sort="none",n=Inf)
       }else{
         wh<-grep(i, colidMain)
-        tt<-topTable(fit[,wh],sort="none",n=Inf, eb=fit)
+        tt<-topTable(fit[,wh],sort="none",n=Inf)
       }
       tt<-tt[,colnames(tt) %in% ttColNames]
       colnames(tt)<-paste(i, colnames(tt),sep="_")
@@ -138,6 +138,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
       fit <- eBayes(fit[,-1])
     }
   }
+  fit<<-fit
   if(verbose) cat("processing statistics and calculating q-values ... \n")
   main.out<-data.frame(gene=geneIDs,
                        sigma=fit$sigma,
