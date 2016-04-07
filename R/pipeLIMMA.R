@@ -16,6 +16,9 @@
 #' modeling function. NULL values force a traditional test of effects via limma::lmFit/ebayes.
 #' @param block A string that represents an individual that was repeatedly measured,
 #' if NULL, runs the analysis without a blocking / duplicate correlation factor
+#' @param runVoom Logical, if TRUE, normalizes the counts matrix via voom. If FALSE,
+#' assumes the counts matrix is already voom-normalized. Pre-running voom will speed up
+#' analyses with multiple pipeLIMMA calls.
 #' @param use.topTable Logical, report F-statistics across all factors? If true,
 #' a third element is returned called fstats.
 #' @param use.qualityWeights Logical, run voom with quality weights or not?
@@ -53,7 +56,7 @@
 #' @importFrom  qvalue qvalue
 #' @export
 pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL,
-                    design=NULL, use.qualityWeights=TRUE,use.topTable=FALSE,
+                    design=NULL, runVoom=TRUE, use.qualityWeights=TRUE,use.topTable=FALSE,
                     geneIDs=NA, verbose=TRUE, plotVoom=FALSE, ...){
 
   extractTopTable<-function(fit, formula){
@@ -102,24 +105,27 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   }else{
     useBlock=TRUE
   }
-
-  if(verbose) cat("calculating normalization factors ... \n")
   if(is.na(geneIDs)){
     geneIDs<-rownames(counts)
   }
   if(is.null(design)){
     design<-model.matrix(as.formula(formula), data = info)
   }
-  y <- DGEList(counts = counts)
-  y <- calcNormFactors(y)
-
-  if(use.qualityWeights){
-    if(verbose) cat("running voom normalization correcting for quality weights ... \n")
-    v <- voomWithQualityWeights(y, design=design, plot = plotVoom)
+  if(runVoom){
+    if(verbose) cat("calculating normalization factors ... \n")
+    y <- DGEList(counts = counts)
+    y <- calcNormFactors(y)
+    if(use.qualityWeights){
+      if(verbose) cat("running voom normalization correcting for quality weights ... \n")
+      v <- voomWithQualityWeights(y, design=design, plot = plotVoom)
+    }else{
+      if(verbose) cat("running voom normalization ... \n")
+      v <- voom(y, design=design, plot = plotVoom)
+    }
   }else{
-    if(verbose) cat("running voom normalization ... \n")
-    v <- voom(y, design=design, plot = plotVoom)
+    v<-counts
   }
+
   if(useBlock){
     if(verbose) cat("calculating duplicate correlation among replicates ... \n")
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
