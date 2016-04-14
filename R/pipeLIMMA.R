@@ -84,15 +84,17 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
       }
       tt<-tt[,colnames(tt) %in% ttColNames]
       tt$adj.P.Val<-NULL
-      tt$Q.Value<-qvalue(tt$P.Value)$qvalue
+      tt$Q.Value<-p.adjust(tt$P.Value, method = "fdr")
       colnames(tt)<-paste(i, colnames(tt),sep="_")
       tt$gene<-row.names(tt)
       return(tt)
     })
     if(length(tt)>1){
       out<-merge(tt[[1]],tt[[2]],by="gene")
-      for(i in 3:length(tt)){
-        out<-merge(out,tt[[i]],by="gene")
+      if(length(tt)>2){
+        for(i in 3:length(tt)){
+          out<-merge(out,tt[[i]],by="gene")
+        }
       }
     }else{
       out<-tt[[1]]
@@ -158,7 +160,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
                        Amean=fit$Amean,
                        Fstat=fit$F,
                        Fpvalue=fit$F.p.value,
-                       Fqvalue=qvalue(fit$F.p.value)$qvalue)
+                       Fqvalue=p.adjust(fit$F.p.value, method="fdr"))
 
   ebayes.coef<-fit$coefficients
   colnames(ebayes.coef)<-paste("ebayesCoef_",colnames(ebayes.coef),sep="")
@@ -169,7 +171,7 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
   ebayes.p<-fit$p.value
   colnames(ebayes.p)<-paste("ebayesPvalue_",colnames(ebayes.p),sep="")
 
-  ebayes.q<-apply(ebayes.p, 2, function(x) qvalue(x)$qvalue)
+  ebayes.q<-apply(ebayes.p, 2, function(x) p.adjust(x, method = "fdr"))
   colnames(ebayes.q)<-gsub("ebayesPvalue_","ebayesQvalue_",colnames(ebayes.p))
 
   coefnames<-colnames(fit)
