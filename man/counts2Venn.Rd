@@ -18,7 +18,7 @@ Must be of length <=4.}
 
 \item{colors}{A vector of colors to use for each cirlce.}
 
-\item{type}{The type of venn diagram to plot. Scaled = size of circles is
+\item{type}{The type of diagram to plot. Euler = size of circles is
 weighted. Both = both types. Any other call gives typical venn diagrams.}
 
 \item{legx, legy}{Position of legend for plot type "limma" or "both"}

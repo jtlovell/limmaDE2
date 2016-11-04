@@ -5,6 +5,8 @@
 #'
 #' @param lfc1 A vector of log-2 fold change (or similar data) for the x axis
 #' @param lfc2 A vector of log-2 fold change (or similar data) for the y axis
+#' @param cols A vector of colors,
+#' if specified, overrides all other coloring parameters
 #' @param sig1 Either a 0/1 binary vector of significance, or a
 #' vector of transformed p-values for coloring the x axis points
 #' @param sig2 Either a 0/1 binary vector of significance, or a
@@ -36,34 +38,52 @@
 #' }
 #'
 #' @export
-volcanoPair<-function(lfc1, lfc2, sig1, sig2, alpha=0.05,
-                      pointcols=c("darkred","skyblue","forestgreen",rgb(0,0,0,.5)),
-                      pchs=c(19,19,19,19), cex=c(.5,.5,.5,.5),legpos="topleft"
-                      ,...){
-  if(length(unique(c(sig1,sig2)))>2){
-    sig1<-ifelse(sig1<=alpha, TRUE, FALSE)
-    sig2<-ifelse(sig2<=alpha, TRUE, FALSE)
-  }else{
-    sig1<-ifelse(sig1==1, TRUE, FALSE)
-    sig2<-ifelse(sig2==1, TRUE, FALSE)
+volcanoPair<-function(lfc1, lfc2,
+                      legpos="topleft",leginset=c(0,0), legcex=1,
+                      pt.col = NULL, pt.pch = NULL, pt.cex = NULL,
+                      line.col = "grey", line.lty =2, line.lwd = 1, ...){
+  plot(x=lfc1, y=lfc2, type="n",...)
+  lines(c(0,0),c(min(lfc2),max(lfc2)), lty=line.lty, col=line.col, lwd = line.lwd)
+  lines(c(min(lfc1),max(lfc1)),c(0,0), lty=line.lty, col=line.col, lwd = line.lwd)
+
+  if(is.null(pt.col)) pt.col<-"grey"
+  if(is.null(pt.pch)) pt.pch<-19
+  if(is.null(pt.cex)) pt.cex<-1
+
+  points(x=lfc1, y=lfc2, col = pt.col, pch = pt.pch, cex = pt.cex)
+
+  if(sum(c(length(pt.col),length(pt.pch),length(pt.cex)))>1){
+    if(any(all(length(pt.col) > 1, length(pt.pch) > 1),
+           all(length(pt.col) > 1, length(pt.cex) > 1))){
+      totab<-pt.col
+    }else{
+      if(length(pt.col)>1) {
+        tab<-table(pt.col)
+        leg.col<-names(tab)
+        leg.pch = pt.pch
+        leg.cex = pt.cex
+      }else{
+        if(length(pt.pch)>1){
+          tab<-table(pt.pch)
+          leg.pch<-names(tab)
+          leg.col = pt.col
+          leg.cex = pt.cex
+        }else{
+          if(length(pt.cex)>1){
+            tab<-table(pt.cex)
+            leg.cex<-names(tab)
+            leg.col = pt.col
+            leg.pch = pt.pch
+          }
+        }
+      }
+    }
+
+    legend(legpos, leginset, tab,
+           col = leg.col,
+           pch = leg.pch,
+           pt.cex = leg.cex,
+           bty = "n")
+    return(tab)
   }
-  sigs<-ifelse(sig1 & sig2, "both",
-               ifelse(sig1,"sig1",
-                      ifelse(sig2,"sig2","NS")))
-  tab<-table(factor(sigs,levels=c("both","sig1","sig2","NS")))
-  plot(x=lfc1, y=lfc2, type="n", ...)
-  lines(c(0,0),c(min(lfc2),max(lfc2)), lty=2, col="grey")
-  lines(c(min(lfc1),max(lfc1)),c(0,0), lty=2, col="grey")
-  points(x=lfc1[sigs=="NS"], y=lfc2[sigs=="NS"], col=pointcols[4], pch=pchs[4], cex=cex[4])
-  points(x=lfc1[sigs=="sig2"], y=lfc2[sigs=="sig2"], col=pointcols[3], pch=pchs[3], cex=cex[3])
-  points(x=lfc1[sigs=="sig1"], y=lfc2[sigs=="sig1"], col=pointcols[2], pch=pchs[2], cex=cex[2])
-  points(x=lfc1[sigs=="both"], y=lfc2[sigs=="both"], col=pointcols[1], pch=pchs[1], cex=cex[1])
-
-  legend(legpos, cex=.8,
-         legend=c(tab[1], tab[2], tab[3], tab[4]),
-         pch=c(pchs[1],pchs[2],pchs[3], pchs[4]),
-         col=c(pointcols[1], pointcols[2], pointcols[3], pointcols[4]),
-         ncol=2, title="n genes", xjust=0, yjust=.5, bty="n")
-
-  return(tab)
 }

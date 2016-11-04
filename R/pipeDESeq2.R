@@ -2,7 +2,7 @@
 #'
 #'
 #' @description
-#' \code{pipeDESeq2} Run a pipeline of DESeq2 functions for differential gene expression.
+#' \code{pipeDESeq2} Run a pipeline of DESeq2 (if installed) functions for differential gene expression.
 #'
 #' @param counts A count matrix
 #' @param info An experimental design matrix
@@ -30,16 +30,29 @@
 ##' the statsistics generated from DESeq2::results
 ##'
 #' @examples
+#' \dontrun{
+#' library(DESeq2)
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' ### Not Run ### stats<-pipeDESeq(counts=counts, info=info, formula = " ~ treatment")
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", reduced= "~ 1", testType = "LRT")
-#' @import  DESeq2
+#' stats<-pipeDESeq(counts=counts, info=info,
+#'    formula = " ~ treatment")
+#' stats<-pipeLIMMA(counts=counts, info=info,
+#'    formula = " ~ treatment",
+#'    reduced= "~ 1",
+#'    testType = "LRT")
+#' }
+#'
 #' @export
 pipeDESeq2<-function(counts, info, formula=NULL, reduced=NULL,testType="Wald",
                     geneIDs=NA, verbose=TRUE,...){
+
+  if(!requireNamespace("DESeq2", quietly = TRUE)){
+    stop("install the DESeq2 package to run this function\n")
+  }else{
+    requireNamespace("DESeq2")
+  }
 
   se<-SummarizedExperiment(assays = data.matrix(counts),
                            colData = DataFrame(info))

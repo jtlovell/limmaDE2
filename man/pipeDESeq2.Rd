@@ -35,7 +35,7 @@ a list with 2 elements (if simple=TRUE)
 the statsistics generated from DESeq2::results
 }
 \description{
-\code{pipeDESeq2} Run a pipeline of DESeq2 functions for differential gene expression.
+\code{pipeDESeq2} Run a pipeline of DESeq2 (if installed) functions for differential gene expression.
 }
 \details{
 This function runs the following pipeline:
@@ -46,11 +46,19 @@ This function runs the following pipeline:
 }
 }
 \examples{
+\dontrun{
+library(DESeq2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-### Not Run ### stats<-pipeDESeq(counts=counts, info=info, formula = " ~ treatment")
-### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", reduced= "~ 1", testType = "LRT")
+stats<-pipeDESeq(counts=counts, info=info,
+   formula = " ~ treatment")
+stats<-pipeLIMMA(counts=counts, info=info,
+   formula = " ~ treatment",
+   reduced= "~ 1",
+   testType = "LRT")
+}
+
 }
 

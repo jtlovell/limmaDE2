@@ -4,14 +4,21 @@
 \alias{volcanoPair}
 \title{Scatter plot of log2 fold changes.}
 \usage{
-volcanoPair(lfc1, lfc2, sig1, sig2, alpha = 0.05, pointcols = c("darkred",
-  "skyblue", "forestgreen", rgb(0, 0, 0, 0.5)), pchs = c(19, 19, 19, 19),
-  cex = c(0.5, 0.5, 0.5, 0.5), legpos = "topleft", ...)
+volcanoPair(lfc1, lfc2, legpos = "topleft", leginset = c(0, 0),
+  legcex = 1, pt.col = NULL, pt.pch = NULL, pt.cex = NULL,
+  line.col = "grey", line.lty = 2, line.lwd = 1, ...)
 }
 \arguments{
 \item{lfc1}{A vector of log-2 fold change (or similar data) for the x axis}
 
 \item{lfc2}{A vector of log-2 fold change (or similar data) for the y axis}
+
+\item{legpos}{The position of the legend. Defaults to the top right.}
+
+\item{...}{additional arguments passed on to plot}
+
+\item{cols}{A vector of colors,
+if specified, overrides all other coloring parameters}
 
 \item{sig1}{Either a 0/1 binary vector of significance, or a
 vector of transformed p-values for coloring the x axis points}
@@ -28,10 +35,6 @@ for both [1], just the y axis [2], just the x axis [3] or neighter.}
 \item{pchs}{Follows pointcols for point shapes}
 
 \item{cex}{Follows pointcols for point sizes}
-
-\item{legpos}{The position of the legend. Defaults to the top right.}
-
-\item{...}{additional arguments passed on to plot}
 }
 \value{
 a table with the number of significant effects

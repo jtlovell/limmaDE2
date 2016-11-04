@@ -13,4 +13,7 @@ Depends:
     qvalue,
     edgeR,
     venneuler
+Suggests:
+    DESeq2
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr

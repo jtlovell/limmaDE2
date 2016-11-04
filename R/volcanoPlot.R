@@ -13,7 +13,9 @@
 #' the color of significant points and the second the non sigificant points
 #' @param pchs Follows pointcols for point shapes
 #' @param cex Follows pointcols for point sizes
-#' @param legpos The position of the legend. Defaults to outside of the plot on the right
+#' @param legpos The position of the legend. Defaults to topright
+#' @param leginset How much the legend should be inset - defaults to just
+#' outside the plotting window.
 #' @param ylab The label for the y axis
 #' @param xlab The label for the x axis
 #' @param ... additional arguments passed on to plot
@@ -37,7 +39,8 @@
 #' @export
 volcanoPlot<-function(pval, lfc, sig, alpha=0.05,
                       pointcols=c(rgb(1,0,0,.5),rgb(0,0,0,.5)),
-                      pchs=c(19,19), cex=c(.5,.5),legpos=c(-0.25,0),
+                      pchs=c(19,19), cex=c(.5,.5),
+                      legpos="topright",leginset = c(-0.25,0),
                       ylab="-log10 P-value", xlab="log2 Fold Change",...){
 
   if(length(unique(sig))>2){
@@ -52,13 +55,13 @@ volcanoPlot<-function(pval, lfc, sig, alpha=0.05,
   plot(x=lfc, y=-log10(pval), type="n", ylab=ylab, xlab=xlab, ...)
   points(x=lfc[sig], y=(-log10(pval))[sig], col=pointcols[1], pch=pchs[1], cex=cex[1])
   points(x=lfc[!sig], y=(-log10(pval))[!sig], col=pointcols[2], pch=pchs[2], cex=cex[2])
-  legend("topright", inset=legpos[1:2], cex=.8,
+  legend(legpos, inset=leginset[1:2], cex=.8,
          legend=c(paste("< 0 : ", udsig[1], sep=""),
                   paste("> 0 : ", udsig[2], sep=""),
                   paste("NS : ", ns, sep="")),
          pch=c(pchs[1],pchs[1],pchs[2]),
          col=c(pointcols[1], pointcols[1], pointcols[2]),
-         ncol=1, title="significance", xjust=0, yjust=.5)
+         ncol=1, title="significance", xjust=0, yjust=.5, bty="n")
 
   return(table(updown,sig))
 }

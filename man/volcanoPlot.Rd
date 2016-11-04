@@ -6,7 +6,7 @@
 \usage{
 volcanoPlot(pval, lfc, sig, alpha = 0.05, pointcols = c(rgb(1, 0, 0, 0.5),
   rgb(0, 0, 0, 0.5)), pchs = c(19, 19), cex = c(0.5, 0.5),
-  legpos = c(-0.25, 0), ylab = "-log10 P-value",
+  legpos = "topright", leginset = c(-0.25, 0), ylab = "-log10 P-value",
   xlab = "log2 Fold Change", ...)
 }
 \arguments{
@@ -27,7 +27,10 @@ the color of significant points and the second the non sigificant points}
 
 \item{cex}{Follows pointcols for point sizes}
 
-\item{legpos}{The position of the legend. Defaults to outside of the plot on the right}
+\item{legpos}{The position of the legend. Defaults to topright}
+
+\item{leginset}{How much the legend should be inset - defaults to just
+outside the plotting window.}
 
 \item{ylab}{The label for the y axis}
 
