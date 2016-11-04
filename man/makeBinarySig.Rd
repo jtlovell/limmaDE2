@@ -36,7 +36,7 @@ p-value or q-value columns
 }
 \examples{
 \dontrun{
-data(kidney) # from simseq
+data(kidney) # from SimSeq
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
