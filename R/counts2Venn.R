@@ -11,7 +11,7 @@
 #' Must be of length <=4.
 #' @param names A vector of names for each of the venn circles.
 #' @param colors A vector of colors to use for each cirlce.
-#' @param type The type of venn diagram to plot. Scaled = size of circles is
+#' @param type The type of diagram to plot. Euler = size of circles is
 #' weighted. Both = both types. Any other call gives typical venn diagrams.
 #' @param legx,legy Position of legend for plot type "limma" or "both"
 #' @param ... additional arguments passed to plot.
@@ -38,10 +38,7 @@
 #' @importFrom  venneuler venneuler
 #' @export
 counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
-  if(type=="both"){
-    par(mfrow=c(2,1))
-  }
-  if(type %in% c("scaled","both")){
+  if(type == "Euler"){
 
     mat<-as.matrix(x[,cols])
     colnames(mat)<-names

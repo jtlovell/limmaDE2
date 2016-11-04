@@ -16,9 +16,8 @@ vignette: >
 knitr::opts_chunk$set(fig.width=8, fig.height=6,echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
-
-The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:
-
+### Overview
+##### The R package limmaDE2 contains a set of functions designed to make running differential expression analyses in LIMMA more user friendly. There are several functions of this package:
 - `pipeLIMMA` Run analyses of differnetial expression in LIMMA. 
 - `makeBinarySig` Find and count the number of significantly differentially expressed genes
 - `pqHists` Plot the distribution of P and FDR-corrected P (Q) values
@@ -28,204 +27,243 @@ The R package limmaDE2 contains a set of functions designed to make running diff
 - `pipeDESeq2` Runs an analysis of differential expression similar to that of pipeLIMMA, except through the DESeq2 package. 
 
 
-## Installation
+### 1. Installation
 The limmaDE2 packages is not on CRAN and can only be installed from github. Make sure the `devtools` package is installed on your system. The limmaDE2 package also requires several other R packages to be installed. These packages have functions upon which limmaDE2 depends:
 
+##### Essential Packages:
 - `limma` contains all of the basic statistical elements that are called here.
+- `qvalue` fdr-corrected p-values
+- `edgeR` Differential expression package used for some transformations
+
+##### Data for this vignette comes from:
 - `SimSeq` permits simulation of RNA-seq data
+
+##### Other useful packages:
 - `plyr` summarize and manipulate lists and dataframes
 - `vegan` some distance-based methods
 - `Heatplus` heatmap plotting
 - `topGO` gene ontology (GO) analysis
-- `qvalue` fdr-corrected p-values
+- `ggplot2` routines for complex plots
+- `hexbin` methods to simplify data in plots
 
-If these are not on your system, run the following command in R:
-```{r, eval=FALSE}
-install.packages(c("plyr","vegan"))
-
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("limma","SimSeq","Heatplus","topGO","qvalue"))
-```
-
-Also, for this tutorial, you will need a few additional packages.
-```{r, eval=FALSE}
-install.packages(c("ggplot2","reshape2","hexbin"))
-```
-
-To install limmaDE2:
+##### To install limmaDE2:
 ```{r}
 library(devtools)
 install_github("jtlovell/limmaDE2")
 library(limmaDE2)
 ```
 
-A data package `PhyGenomicsData.PV2016` accompanies limmaDE2 and contains datasets needed to run this tutorial.
-```{r}
-install_github("jtlovell/PhyGenomicsData.PV2016")
-library(PhyGenomicsData.PV2016)
-```
-
-Load all packages that will be needed for the tutorial:
+##### Load all packages that will be needed for the tutorial:
 ```{r}
 library("ggplot2")
 library("reshape2")
-library("hexbin")
+library("SimSeq")
+library("DESeq2")
 ```
-## Importing data and checking
-For limmaDE2 to work, two matrices are needed:
+
+
+### 2. Importing data and checking
+##### For limmaDE2 to work, two matrices are needed:
 - `counts`: Raw transcript abundance counts
 - `info`: Experimental design information
 These two matrices must match exactly, where each row in the `info` matrix corresponds to each column in `counts`. For best performance, the name of each gene should be stored in the rownames of the counts matrix. 
 
 ```{r}
-data(info12)
-data(counts12)
+data(kidney) # from simseq
+counts<-kidney$counts
+counts<-counts[sample(1:nrow(counts),1000),]
+info<-with(kidney, 
+           data.frame(id = paste(replic, treatment, sep = "_"), 
+                      rep=replic, 
+                      Treatment=ifelse(treatment == "Tumor","tumor","cntr"), 
+                      stringsAsFactors=F))
+colnames(counts)<-info$id
 ```
 
-Here, info12 and counts12 come from a dataset where the AP13 switchgrass genotype was cloned and planted under a rain-exclusion shelter. Six treatment levels were applied. Relevant information about this experiment is in a manuscript in review. Contact `johntlovell@gmail.com` for more information. 
-
-In all statistical analyses, it is important to set the levels of the experimental factors. This is esspecially true in linear modelling, such as limma, where levels are tested against the base level. Here, we set the "high" treatment as the base. 
+##### Add in another category that gives us a factorial design
 ```{r}
-info12$Treatment <- factor(info12$Treatment,
-                           levels = c("high", "75th", "ambient", "mean", "25th", "low"))
+group.a<-c("4619", "4712", "4863", "4865", "5452", "5453", "5454", "5455",
+          "5456", "5457","5458", "5461", "5462", "5463", "5465", "5467",
+          "5468", "5469", "5470", "5549","5552", "5580", "5641", "5672",
+          "5689", "5701", "5703", "5706", "5989", "6088")
+info$group<-ifelse(info$rep %in% group.a, "a","b")
+with(info, table(group, Treatment))
+
+info$trt.grp<-with(info, paste(Treatment, group, sep="_"))
+
 ```
 
-## Basic analysis of differential expression
-For the purposes of this tutorial, we will use only the first 1000 genes in the counts matrix. This will speed up all downstream analyses.
+##### The top of the example experimental design dataset
 ```{r}
-counts12<-counts12[1:1000,]
+head(info)
 ```
 
-To test the plasticity (differential expression) of all genes across the six treatments:
+##### What the example counts dataset looks like
 ```{r}
-stats <- pipeLIMMA(counts = counts12, 
-                   info = info12, 
+counts[1:10,1:3]
+```
+
+In all statistical analyses, it is important to set the levels of the experimental factors. This is esspecially true in linear modelling, such as limma, where levels are tested against the base level. Here, we set the "Non-Tumor" treatment and "a" group as the base. 
+```{r}
+info$Treatment <- factor(info$Treatment,
+                           levels = c("Non-Tumor", "Tumor"))
+info$group <- factor(info$Treatment,
+                           levels = c("a", "b"))
+```
+
+### 3. Basic analysis of differential expression
+##### To test the plasticity (differential expression) of all genes between the tumor and control tissue:
+```{r}
+stats <- pipeLIMMA(counts = counts, 
+                   info = info, 
                    block = NULL, 
                    formula = "~ Treatment")
 ```
 
 `pipeLIMMA` returns three elements: `stats`, `voom` and `fstats`. These are the statistical output of the limma functions: `eBayes`, `voom` and `topTableF`. Inspect the top few rows and columns of each.
 
-- `stats`: eBayes linear model statistics
+##### `stats`: eBayes linear model statistics
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$stats[1:6,1:6])
 ```
 
-- `voom`: normalized expression matrix
+##### `voom`: normalized expression matrix
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$voom[["E"]][1:6,1:6])
 ```
 
-- `fstats`: F-statistics for each factor in the model, in this case, just treatment
+##### `fstats`: F-statistics for each factor in the model, in this case, just treatment
 ```{r, echo=FALSE, results='asis'}
 knitr::kable(stats$fstats[1:6,])
 ```
 
-## Count the number of significantly differentially expressed genes
-The function `makeBinarySig` looks for a provided string (e.g. "Q.Value") and outputs a matrix with whether or not those columns have values <= the provided alpha
+### 4. Differential expression using a blocking variable
+##### Lets say that here, there is some sort of experimental blocking. In this case, we employ a routine in limma that calculates the `duplicateCorrelation` among blocks, then uses the blocking variable in the linear model fit. 
+```{r}
+info$block <- rep(1:2,each=nrow(info)/2)
+stats.block <- pipeLIMMA(counts = counts, 
+                   info = info, 
+                   block = info$block,
+                   formula = "~ Treatment")
+```
 
+### 5. Differential expression in a factorial experiment
+```{r}
+stats.factorial <- pipeLIMMA(counts = counts, 
+                   info = info, 
+                   block = NULL, 
+                   formula = "~ Treatment + group + Treatment*group")
+```
+
+### 6. Calculating differential expression using specific contrasts
+Sometimes, it may make more sense to use specific contrasts to test for differential expression. For example, let's say we are interested in how the tumors and non-tumor tissues differ for each of the two groups.
+
+##### First, we need to construct a design matrix. 
+```{r}
+design <- with(info, model.matrix(~ 0 + trt.grp))
+colnames(design)<-gsub("trt.grp","",colnames(design))
+head(design)
+```
+##### Then we construct a contrast matrix. 
+```{r}
+contrast.matrix <- makeContrasts(
+  tumor_a - cntr_a , 
+  tumor_b - cntr_b,
+  levels = design)
+head(contrast.matrix)
+```
+
+##### Finally, we fit the model with a contrast matrix as the design, overriding the formula argument. 
+```{r}
+stats <- pipeLIMMA(counts = counts, 
+                   info = info, 
+                   block = NULL, 
+                   design = design, 
+                   contrast.matrix = contrast.matrix)
+voom<-stats$voom$E
+stats.contrasts <- stats$stats
+```
+
+
+### 6. Count and plot the number of significantly differentially expressed genes
+The function `makeBinarySig` looks for a provided string (e.g. "Q.Value") and outputs a matrix with whether or not those columns have values <= the provided alpha
 ```{r}
 lmStats <- stats$stats
 sigs <- makeBinarySig(lmStats, what = "Qvalue", alpha = 0.05)
 ```
 
-## Make a volcano plot of the results
+##### Make a venn diagram of number of differentially expressed genes among the experimental factors
+```{r}
+counts2Venn(x=sigs, cols=c(1,2,3), names=c("treatment","group","trt*grp"),
+   colors=c("blue","red","yellow"),type="limma", legx=-3.3,legy=-3)
+```
+
+##### Make a euler diagram of number of differentially expressed genes among the experimental factors
+```{r}
+counts2Venn(x=sigs, cols=c(1,2,3), names=c("treatment","group","trt*grp"),
+   colors=c("blue","red","yellow"),type="Euler", legx=-3.3,legy=-3)
+```
+
+### 7. Make a volcano plot of the results
 Volcano plots are a good way to look at the differences between two experimental levels. Here, we compare the extent of differential expression between the "high" treatment to the "low" treatment. 
 ```{r}
-with(lmStats, volcanoPlot(pval = ebayesPvalue_Treatmentlow,
-                          lfc = Treatmentlow_logFC,
-                          sig = ebayesQvalue_Treatmentlow,
-                          main = "high vs. low treatment Volcano Plot", 
-                          bty = "n"))
+with(lmStats, volcanoPlot(pval = ebayesPvalue_TreatmentTumor,
+                          lfc = TreatmentTumor_logFC,
+                          sig = ebayesQvalue_TreatmentTumor,
+                          main = "no tumor vs. tumor Volcano Plot", 
+                          xlab = "tumor - no tumor Log2 Fold Change",
+                          bty = "n", legpos = "top", leginset = c(0,0)))
 ```
 
-Another option to make volcano plots is by hex densities... this is a good approach if you want to keep the files sizes small, or if you have many plots to make at once. To accomplish this approach, use `ggplot2`. Here, we compare the extent of differential expression between the "high" treatment and the "low","25th","mean" and "75th" treatments. 
-To plot all contrasts simultaneously, first transform the statistics, so that they are in the "long" format using the `reshape2` package's `melt` function. 
+### 8. Using two contrasts, make a pairwise volcano plot
+##### Just coloring by significance
 ```{r}
-lmStatsM.long.lfc <- melt(lmStats, 
-                          measure.vars = colnames(lmStats)[grep("logFC", colnames(lmStats))])
-lmStatsM.long.p <- melt(lmStats, 
-                        measure.vars = colnames(lmStats)[grep("Pvalue", colnames(lmStats))])
-lmStatsM.long.q <- melt(lmStats, 
-                        measure.vars = colnames(lmStats)[grep("Qvalue", colnames(lmStats))])
-toHex<-data.frame(lmStatsM.long.lfc[, c("variable","value")],
-                  lmStatsM.long.p[, "value"],
-                  lmStatsM.long.q[, "value"])
-colnames(toHex) <- c("contrast","lfc","p","q")
-ggplot(toHex, aes(x = lfc, y=-log10(p), fill = ifelse(q <= 0.05,"sig","NS"))) +
-  stat_binhex(bins=100) + 
-  facet_wrap(~contrast) +
-  scale_fill_manual(values=c("grey","darkred"), guide = FALSE) +
-  labs(x = "log2 Fold change (Genotype") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        strip.background = element_blank())
+with(stats.contrasts, volcanoPair(lfc1 = tumor_a...cntr_a_logFC,
+                                  lfc2 = tumor_b...cntr_b_logFC,
+                                  sig1 = ebayesQvalue_tumor_a...cntr_a,
+                                  sig2 = ebayesQvalue_tumor_b...cntr_b,
+                                  alpha = 0.05))
+```
+##### Custom colors
+```{r}
+sigs <- data.frame(makeBinarySig(stats.contrasts, what = "Qvalue", alpha = 0.05))
+names(sigs)<-c("sig.a","sig.b")
+sigs$sign.a<-sign(stats.contrasts$tumor_a...cntr_a_logFC)
+sigs$sign.b<-sign(stats.contrasts$tumor_b...cntr_b_logFC)
+
+cols<-with(sigs, ifelse(sig.a + sig.b == 0,  
+                        "grey",
+                        ifelse(sig.a + sig.b == 2 & sign.a*sign.b == 1, 
+                               "pink",
+                               ifelse(sig.a + sig.b == 2 & sign.a*sign.b == -1,
+                                      "cornflowerblue",
+                                      ifelse(sig.a == 1, "darkblue", "darkred")))))
 ```
 
-## Calculating differential expression with a blocking factor
-Often, it is important to correct for spatial designs, or repeated measures on single individuals. In this case, we have a split plot design, so we can correct for this treatment the sub block as a blocking variable
+##### Make the plot
 ```{r}
-stats <- pipeLIMMA(counts = counts12, 
-                   info = info12, 
-                   block = as.factor(info12$Sub_Block), 
-                   formula = "~ Treatment")
-voom <- stats$voom[["E"]]
+with(stats.contrasts, volcanoPair(lfc1 = tumor_a...cntr_a_logFC,
+                                  lfc2 = tumor_b...cntr_b_logFC,
+                                  pt.col = cols, pt.pch = 19, pt.cex=.5))
 ```
 
-Such approaches can reduce the residual variance and improve the ability to detect differential expression. 
-Here is the original model n. significance:
-```{r}
-sigs <- makeBinarySig(lmStats, what = "Qvalue", alpha = 0.05) 
-```
-And with the sub-plot blocking factor:
-```{r}
-lmStats.block <- stats$stats
-sigs <- makeBinarySig(lmStats.block, what = "Qvalue", alpha = 0.05) 
-```
-
-## Calculating differential expression using specific contrasts
-Sometimes, it may make more sense to use specific contrasts to test for differential expression. For example, let's say we are interested in how different the "high" and "75th" treatments are from the "mean" and "low" treatments. 
-First, we need to construct a contrast matrix. In this case, without an intercept. Also, it is good practice to make the column names as short as possibe, while not starting with a number. 
-
-```{r}
-design <- with(info12, model.matrix(~ 0 + Treatment))
-colnames(design) <- gsub("Treatment", "f", colnames(design))
-contrast.matrix <- makeContrasts(
-  f75th - flow, fhigh - flow,  f75th-fmean, fhigh-fmean, 
-  levels = design)
-```
-
-Then, fit the model with a contrast matrix as the design, overriding the formula argument. 
-```{r}
-stats <- pipeLIMMA(counts = counts12, 
-                   info = info12, 
-                   block = info12$Sub_Block, 
-                   design = design, 
-                   contrast.matrix = contrast.matrix)
-lmStats.contrast <- stats$stats
-sigs <- makeBinarySig(lmStats.contrast, what = "Qvalue", alpha = 0.05) 
-```
 
 ## Principal component analysis of gene expression
 It is often a good idea to get an idea of how the individuals (libraries) are structured - how similar are they to eachother. Principal component analyses allow for this kind of inference. 
 
 ```{r}
-pca12 <- voom2PCA(v=voom, info = info12, ids = info12$id, pcas2return = 6)
+pca12 <- counts2PCA(counts=voom, info = info, ids = info$id, pcas2return = 6)
 pca12.var <- pca12[[2]]
 pca12 <- pca12[[1]]
 gcols <- c("darkblue", "blue", "gold", "green", "pink", "red")
-ggplot(pca12, aes(x = PC1, y = PC2, col = Treatment)) +
+ggplot(pca12, aes(x = PC1, y = PC2, col = group, shape = Treatment)) +
   geom_vline(xintercept = 0, lty = 2)+
   geom_hline(yintercept = 0, lty = 2)+
   geom_point() +
   theme_bw() +
-  scale_color_manual(values = gcols) +
-  scale_shape_manual(values = gpchs) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         strip.background = element_blank()) +
-  stat_ellipse(level = 0.50) +
   labs(x = paste("PCA1 (", pca12.var[1],"%)", sep = ""),
        y = paste("PCA2 (", pca12.var[2],"%)", sep = ""),
        title = "PCA analysis of voom-normalized expression")
