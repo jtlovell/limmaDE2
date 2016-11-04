@@ -22,16 +22,19 @@
 
 #' @return a table with the number of significant effects
 #' @examples
-#' data(kidney)
+#' \dontrun{
+#' data(kidney) #from the simseq package
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment + rep", block=NULL, getTopTable=T, getEbayes=T)
-#' ### Not Run ### stats<-stats$stats
-#' ### Not Run ### volcanoPair(lfc1=stats$treatmentTumor_logFC,
-#' ### Not Run ###             lfc2=stats$rep6090_logFC,
-#' ### Not Run ###             sig1=stats$ebayesQvalue_treatmentTumor,
-#' ### Not Run ###             sig2=stats$ebayesQvalue_rep6090)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment + rep", block=NULL, getTopTable=T, getEbayes=T)
+#' stats<-stats$stats
+#' volcanoPair(lfc1=stats$treatmentTumor_logFC,
+#'            lfc2=stats$rep6090_logFC,
+#'             sig1=stats$ebayesQvalue_treatmentTumor,
+#'             sig2=stats$ebayesQvalue_rep6090)
+#' }
+#'
 #' @export
 volcanoPair<-function(lfc1, lfc2, sig1, sig2, alpha=0.05,
                       pointcols=c("darkred","skyblue","forestgreen",rgb(0,0,0,.5)),

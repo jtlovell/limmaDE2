@@ -5,9 +5,9 @@
 \title{A pipeline for LIMMA.}
 \usage{
 pipeLIMMA(counts, info, formula = NULL, contrast.matrix = NULL,
-  block = NULL, design = NULL, use.qualityWeights = TRUE,
-  use.topTable = FALSE, geneIDs = NA, verbose = TRUE, plotVoom = FALSE,
-  ...)
+  block = NULL, design = NULL, runVoom = TRUE,
+  use.qualityWeights = TRUE, use.topTable = FALSE, geneIDs = NA,
+  verbose = TRUE, plotVoom = FALSE, ...)
 }
 \arguments{
 \item{counts}{A count matrix}
@@ -27,6 +27,10 @@ if NULL, runs the analysis without a blocking / duplicate correlation factor}
 \item{design}{A design matrix, usually created by a call from "model.matrix". Used only if
 limma:contrast.fit is intended as the statistical modeling function. NULL values force
 a traditional test of effects via limma::lmFit/ebayes.}
+
+\item{runVoom}{Logical, if TRUE, normalizes the counts matrix via voom. If FALSE,
+assumes the counts matrix is already voom-normalized. Pre-running voom will speed up
+analyses with multiple pipeLIMMA calls.}
 
 \item{use.qualityWeights}{Logical, run voom with quality weights or not?}
 
@@ -65,11 +69,13 @@ This function runs the following pipeline:
 }
 }
 \examples{
-data(kidney)
+\dontrun{
+data(kidney) # from simseq
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
-### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
+stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+}s
 }
 

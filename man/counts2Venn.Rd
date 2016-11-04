@@ -39,13 +39,17 @@ if scaled, runs venneuler::venneuler venn diagrams. Otherwise, runs
 limma::vennCounts/vennDiagram
 }
 \examples{
-data(kidney)
+\dontrun{
+data(kidney) # from simseq
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
-info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-### Not Run ### sig<-makeBinarySig(x= stats$stats, what="Pvalue")
-### Not Run ### counts2Venn(x=sig, cols=c(1), names=c("treatment"),
-### Not Run ###    colors=c("blue"),type="limma", legx=-3.3,legy=-3)
+info<-data.frame(rep=kidney$replic,
+                 treatment=kidney$treatment)
+stats<-pipeLIMMA(counts=counts, info=info,
+   formula = " ~ treatment", block=NULL)
+sig<-makeBinarySig(x= stats$stats, what="Pvalue")
+counts2Venn(x=sig, cols=c(1), names=c("treatment"),
+   colors=c("blue"),type="limma", legx=-3.3,legy=-3)
+}
 }
 
