@@ -44,7 +44,6 @@ The limmaDE2 packages is not on CRAN and can only be installed from github. Make
 - `hexbin` methods to simplify data in plots
 
 ##### To install limmaDE2:
-<<<<<<< HEAD
 ```{r install limmaDE2, eval = F}
 library(devtools)
 install_github("jtlovell/limmaDE2")
@@ -53,16 +52,6 @@ install_github("jtlovell/limmaDE2")
 ##### Load all packages that will be needed for the tutorial:
 ```{r load packages}
 library("limmaDE2")
-=======
-```{r}
-library(devtools)
-install_github("jtlovell/limmaDE2")
-library(limmaDE2)
-```
-
-##### Load all packages that will be needed for the tutorial:
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 library("ggplot2")
 library("reshape2")
 library("SimSeq")
@@ -76,11 +65,7 @@ library("DESeq2")
 - `info`: Experimental design information
 These two matrices must match exactly, where each row in the `info` matrix corresponds to each column in `counts`. For best performance, the name of each gene should be stored in the rownames of the counts matrix. 
 
-<<<<<<< HEAD
 ```{r load data}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 data(kidney) # from simseq
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
@@ -93,11 +78,7 @@ colnames(counts)<-info$id
 ```
 
 ##### Add in another category that gives us a factorial design
-<<<<<<< HEAD
 ```{r organize data}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 group.a<-c("4619", "4712", "4863", "4865", "5452", "5453", "5454", "5455",
           "5456", "5457","5458", "5461", "5462", "5463", "5465", "5467",
           "5468", "5469", "5470", "5549","5552", "5580", "5641", "5672",
@@ -122,23 +103,14 @@ counts[1:10,1:3]
 In all statistical analyses, it is important to set the levels of the experimental factors. This is esspecially true in linear modelling, such as limma, where levels are tested against the base level. Here, we set the "Non-Tumor" treatment and "a" group as the base. 
 ```{r}
 info$Treatment <- factor(info$Treatment,
-<<<<<<< HEAD
                            levels = c("cntr", "tumor"))
 info$group <- factor(info$group,
-=======
-                           levels = c("Non-Tumor", "Tumor"))
-info$group <- factor(info$Treatment,
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
                            levels = c("a", "b"))
 ```
 
 ### 3. Basic analysis of differential expression
 ##### To test the plasticity (differential expression) of all genes between the tumor and control tissue:
-<<<<<<< HEAD
 ```{r basic pipe}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 stats <- pipeLIMMA(counts = counts, 
                    info = info, 
                    block = NULL, 
@@ -166,11 +138,7 @@ knitr::kable(stats$fstats[1:6,])
 
 ### 4. Differential expression using a blocking variable
 ##### Lets say that here, there is some sort of experimental blocking. In this case, we employ a routine in limma that calculates the `duplicateCorrelation` among blocks, then uses the blocking variable in the linear model fit. 
-<<<<<<< HEAD
 ```{r pipe w block}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 info$block <- rep(1:2,each=nrow(info)/2)
 stats.block <- pipeLIMMA(counts = counts, 
                    info = info, 
@@ -179,11 +147,7 @@ stats.block <- pipeLIMMA(counts = counts,
 ```
 
 ### 5. Differential expression in a factorial experiment
-<<<<<<< HEAD
 ```{r pipe factorial}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 stats.factorial <- pipeLIMMA(counts = counts, 
                    info = info, 
                    block = NULL, 
@@ -209,17 +173,12 @@ head(contrast.matrix)
 ```
 
 ##### Finally, we fit the model with a contrast matrix as the design, overriding the formula argument. 
-<<<<<<< HEAD
 ```{r contrast pipe}
-=======
-```{r}
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 stats <- pipeLIMMA(counts = counts, 
                    info = info, 
                    block = NULL, 
                    design = design, 
                    contrast.matrix = contrast.matrix)
-<<<<<<< HEAD
 stats.contrasts <- stats$stats
 ```
 
@@ -279,75 +238,6 @@ with(stats.contrasts, volcanoPair(lfc1 = tumor_a...cntr_a_logFC,
                                   ylab = "Tumor - control LFC (group B)"))
 ```
 
-=======
-voom<-stats$voom$E
-stats.contrasts <- stats$stats
-```
-
-
-### 6. Count and plot the number of significantly differentially expressed genes
-The function `makeBinarySig` looks for a provided string (e.g. "Q.Value") and outputs a matrix with whether or not those columns have values <= the provided alpha
-```{r}
-lmStats <- stats$stats
-sigs <- makeBinarySig(lmStats, what = "Qvalue", alpha = 0.05)
-```
-
-##### Make a venn diagram of number of differentially expressed genes among the experimental factors
-```{r}
-counts2Venn(x=sigs, cols=c(1,2,3), names=c("treatment","group","trt*grp"),
-   colors=c("blue","red","yellow"),type="limma", legx=-3.3,legy=-3)
-```
-
-##### Make a euler diagram of number of differentially expressed genes among the experimental factors
-```{r}
-counts2Venn(x=sigs, cols=c(1,2,3), names=c("treatment","group","trt*grp"),
-   colors=c("blue","red","yellow"),type="Euler", legx=-3.3,legy=-3)
-```
-
-### 7. Make a volcano plot of the results
-Volcano plots are a good way to look at the differences between two experimental levels. Here, we compare the extent of differential expression between the "high" treatment to the "low" treatment. 
-```{r}
-with(lmStats, volcanoPlot(pval = ebayesPvalue_TreatmentTumor,
-                          lfc = TreatmentTumor_logFC,
-                          sig = ebayesQvalue_TreatmentTumor,
-                          main = "no tumor vs. tumor Volcano Plot", 
-                          xlab = "tumor - no tumor Log2 Fold Change",
-                          bty = "n", legpos = "top", leginset = c(0,0)))
-```
-
-### 8. Using two contrasts, make a pairwise volcano plot
-##### Just coloring by significance
-```{r}
-with(stats.contrasts, volcanoPair(lfc1 = tumor_a...cntr_a_logFC,
-                                  lfc2 = tumor_b...cntr_b_logFC,
-                                  sig1 = ebayesQvalue_tumor_a...cntr_a,
-                                  sig2 = ebayesQvalue_tumor_b...cntr_b,
-                                  alpha = 0.05))
-```
-##### Custom colors
-```{r}
-sigs <- data.frame(makeBinarySig(stats.contrasts, what = "Qvalue", alpha = 0.05))
-names(sigs)<-c("sig.a","sig.b")
-sigs$sign.a<-sign(stats.contrasts$tumor_a...cntr_a_logFC)
-sigs$sign.b<-sign(stats.contrasts$tumor_b...cntr_b_logFC)
-
-cols<-with(sigs, ifelse(sig.a + sig.b == 0,  
-                        "grey",
-                        ifelse(sig.a + sig.b == 2 & sign.a*sign.b == 1, 
-                               "pink",
-                               ifelse(sig.a + sig.b == 2 & sign.a*sign.b == -1,
-                                      "cornflowerblue",
-                                      ifelse(sig.a == 1, "darkblue", "darkred")))))
-```
-
-##### Make the plot
-```{r}
-with(stats.contrasts, volcanoPair(lfc1 = tumor_a...cntr_a_logFC,
-                                  lfc2 = tumor_b...cntr_b_logFC,
-                                  pt.col = cols, pt.pch = 19, pt.cex=.5))
-```
-
->>>>>>> f01e2e70b50c4af8aee63cb9c1f50b5fb4b76767
 
 ## Principal component analysis of gene expression
 It is often a good idea to get an idea of how the individuals (libraries) are structured - how similar are they to eachother. Principal component analyses allow for this kind of inference. 
