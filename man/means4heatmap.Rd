@@ -15,7 +15,9 @@ means4heatmap(v, grps = info$Treatment)
 a matrix with means / gene.
 }
 \description{
-\code{means4heatmap} Take normalized (or not) counts data and produce a matrix that
-can be turned into a heatmap with mean values for each level.
+\code{means4heatmap} Take normalized (or not)
+counts data and produce a matrix that
+can be turned into a heatmap with mean
+values for each level.
 }
 

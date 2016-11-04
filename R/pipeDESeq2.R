@@ -1,21 +1,26 @@
 #' @title A pipeline for DESeq2
 #'
-#'
 #' @description
-#' \code{pipeDESeq2} Run a pipeline of DESeq2 (if installed) functions for differential gene expression.
+#' \code{pipeDESeq2} Run a pipeline of DESeq2 (if installed)
+#' functions for differential gene expression.
 #'
 #' @param counts A count matrix
 #' @param info An experimental design matrix
-#' @param testType The type of statistical test to run. Possible options are "Wald" (Default)
-#' or "LRT". The latter requires the user to specify all full (formula) and reduced models
-#' to test.
-#' @param formula A character string that can be coerced to a formula. Specify if a contrast
+#' @param testType The type of statistical test to run.
+#' Possible options are "Wald" (Default) or "LRT".
+#' The latter requires the user to specify all full
+#' (formula) and reduced models to test.
+#' @param formula A character string that can be
+#' coerced to a formula. Specify if a contrast
 #' model is not desired.
-#' @param reduced If testType = "LRT", a character string that can be coerced to a formula
-#' that represents a sub model to formula. If multiple formulae are specified, the number of
-#' formulae must match that of the formula argument. All reduced formulae must be sub
-#' models of the respective formula. If testType = "Wald", ignored.
-#' @param geneIDs The names of genes. If NA, use row names from counts matrix
+#' @param reduced If testType = "LRT", a character
+#' string that can be coerced to a formula that represents
+#' a sub model to formula. If multiple formulae are specified,
+#' the number of formulae must match that of the formula argument.
+#' All reduced formulae must be sub models of the respective
+#' formula. If testType = "Wald", ignored.
+#' @param geneIDs The names of genes.
+#' If NA, use row names from counts matrix
 #' @param verbose Logical, return progress updates?
 #' @param ... additional arguments to pass to DESeq.
 #'
@@ -35,7 +40,8 @@
 #' data(kidney)
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
-#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+#' info<-data.frame(rep=kidney$replic,
+#'                  treatment=kidney$treatment)
 #' stats<-pipeDESeq(counts=counts, info=info,
 #'    formula = " ~ treatment")
 #' stats<-pipeLIMMA(counts=counts, info=info,
@@ -45,8 +51,9 @@
 #' }
 #'
 #' @export
-pipeDESeq2<-function(counts, info, formula=NULL, reduced=NULL,testType="Wald",
-                    geneIDs=NA, verbose=TRUE,...){
+pipeDESeq2<-function(counts, info, formula=NULL,
+                     reduced=NULL, testType="Wald",
+                     geneIDs=NA, verbose=TRUE,...){
 
   if(!requireNamespace("DESeq2", quietly = TRUE)){
     stop("install the DESeq2 package to run this function\n")

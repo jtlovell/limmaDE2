@@ -73,9 +73,16 @@ This function runs the following pipeline:
 data(kidney) # from simseq
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
-info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-}s
+info<-data.frame(rep=kidney$replic,
+                 treatment=kidney$treatment)
+stats<-pipeLIMMA(counts=counts,
+                 info=info,
+                 formula = " ~ treatment",
+                 block=info$rep)
+stats<-pipeLIMMA(counts=counts,
+                 info=info,
+                 formula = " ~ treatment",
+                 block=NULL)
+}
 }
 

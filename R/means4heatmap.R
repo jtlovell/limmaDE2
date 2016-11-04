@@ -1,9 +1,10 @@
 #' @title Get group means
 #'
-#'
 #' @description
-#' \code{means4heatmap} Take normalized (or not) counts data and produce a matrix that
-#' can be turned into a heatmap with mean values for each level.
+#' \code{means4heatmap} Take normalized (or not)
+#' counts data and produce a matrix that
+#' can be turned into a heatmap with mean
+#' values for each level.
 #'
 #' @param v A dataframe or matrix containing the (normalized) counts
 #' @param grps The experimental factor to use to calculate groups.

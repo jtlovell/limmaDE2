@@ -10,10 +10,12 @@ reportPi0(ps)
 \item{ps}{a vector, data.frame or matrix of pvalues}
 }
 \value{
-a vector (if is.numeric(ps)) or a matrix of pi0 and the number of affected elements
+a vector (if is.numeric(ps)) or a
+matrix of pi0 and the number of affected elements
 }
 \description{
-\code{reportPi0} Calculate pi0 from p-values using the qvalue package
+\code{reportPi0} Calculate pi0 from p-values
+using the qvalue package
 }
 \examples{
 x <- sample(seq(0,1,by=0.0001),1000)

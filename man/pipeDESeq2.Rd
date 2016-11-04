@@ -12,19 +12,24 @@ pipeDESeq2(counts, info, formula = NULL, reduced = NULL,
 
 \item{info}{An experimental design matrix}
 
-\item{formula}{A character string that can be coerced to a formula. Specify if a contrast
+\item{formula}{A character string that can be
+coerced to a formula. Specify if a contrast
 model is not desired.}
 
-\item{reduced}{If testType = "LRT", a character string that can be coerced to a formula
-that represents a sub model to formula. If multiple formulae are specified, the number of
-formulae must match that of the formula argument. All reduced formulae must be sub
-models of the respective formula. If testType = "Wald", ignored.}
+\item{reduced}{If testType = "LRT", a character
+string that can be coerced to a formula that represents
+a sub model to formula. If multiple formulae are specified,
+the number of formulae must match that of the formula argument.
+All reduced formulae must be sub models of the respective
+formula. If testType = "Wald", ignored.}
 
-\item{testType}{The type of statistical test to run. Possible options are "Wald" (Default)
-or "LRT". The latter requires the user to specify all full (formula) and reduced models
-to test.}
+\item{testType}{The type of statistical test to run.
+Possible options are "Wald" (Default) or "LRT".
+The latter requires the user to specify all full
+(formula) and reduced models to test.}
 
-\item{geneIDs}{The names of genes. If NA, use row names from counts matrix}
+\item{geneIDs}{The names of genes.
+If NA, use row names from counts matrix}
 
 \item{verbose}{Logical, return progress updates?}
 
@@ -35,7 +40,8 @@ a list with 2 elements (if simple=TRUE)
 the statsistics generated from DESeq2::results
 }
 \description{
-\code{pipeDESeq2} Run a pipeline of DESeq2 (if installed) functions for differential gene expression.
+\code{pipeDESeq2} Run a pipeline of DESeq2 (if installed)
+functions for differential gene expression.
 }
 \details{
 This function runs the following pipeline:
@@ -51,7 +57,8 @@ library(DESeq2)
 data(kidney)
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
-info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
+info<-data.frame(rep=kidney$replic,
+                 treatment=kidney$treatment)
 stats<-pipeDESeq(counts=counts, info=info,
    formula = " ~ treatment")
 stats<-pipeLIMMA(counts=counts, info=info,

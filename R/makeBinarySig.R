@@ -2,10 +2,11 @@
 #'
 #'
 #' @description
-#' \code{makeBinarySig} Convert some sort of significance distribution to binary
-#' signifcance calls.
+#' \code{makeBinarySig} Convert some sort of significance distribution
+#' to binary signifcance calls.
 #'
-#' @param x A dataframe or matrix containing the significance (p/q/fdr p) values to convert
+#' @param x A dataframe or matrix containing the significance (p/q/fdr p)
+#' values to convert
 #' @param alpha The threshold that defines what is and is not significance
 #' @param what Character vector defining a string to look for in the column names.
 #' For example, "q.value"
@@ -17,8 +18,9 @@
 #' either significant (1) or not (0). Esspecially useful for a dataset that has many
 #' p-value or q-value columns
 
-#' @return a dataframe with all values in the original matrix with column names containing
-#' what, where the values have been transformed to binary
+#' @return a dataframe with all values in the original matrix with
+#' column names containing what, where the values have been
+#' transformed to binary
 #'
 #' @examples
 #' \dontrun{
@@ -30,7 +32,8 @@
 #' sig<-makeBinarySig(x= stats$stats, what="Pvalue")
 #' }
 #' @export
-makeBinarySig<-function(x, alpha=0.05, what="q.value", na.include=TRUE, verbose=TRUE){
+makeBinarySig<-function(x, alpha=0.05, what="q.value",
+                        na.include=TRUE, verbose=TRUE){
   sig.q<-data.matrix(x[,grep(what, colnames(x))])
   if(!na.include){
     sig.q<-sig.q[complete.cases(sig.q),]

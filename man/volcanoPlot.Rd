@@ -42,10 +42,12 @@ outside the plotting window.}
 a table with the number and direction of significance
 }
 \description{
-\code{volcanoPlot} Make an expression volcano plot from log2-fold change and p-value data
+\code{volcanoPlot} Make an expression volcano plot
+from log2-fold change and p-value data
 }
 \details{
-Using base R graphics, this function tabulates the number of significant values and plots
+Using base R graphics, this function tabulates
+the number of significant values and plots
 }
 \examples{
 \dontrun{
@@ -53,7 +55,11 @@ data(kidney) #from the simseq package
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL, getTopTable=T, getEbayes=T)
+stats<-pipeLIMMA(counts=counts, info=info,
+                 formula = " ~ treatment",
+                 block=NULL,
+                 getTopTable=T,
+                 getEbayes=T)
 stats<-stats$stats
 volcanoPlot(pval=stats$ebayesPvalue_treatmentTumor,
             lfc=stats$treatmentTumor_logFC,

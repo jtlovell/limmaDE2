@@ -17,17 +17,21 @@ Possibly output from pipelimma, in the slot "voom".}
 
 \item{plotit}{Logical, should the pca be plotted?}
 
-\item{...}{additional arguments passed on to pairs, for example, the colors of bars}
+\item{...}{additional arguments passed on to pairs, for example,
+the colors of bars}
 }
 \value{
-a list containing a dataframe with the experimental design data, merged with the 1st
-3 principal component axes and a vector of %variance explained by PCA axes.
+a list containing a dataframe with the experimental
+design data, merged with the 1st 3 principal component axes
+and a vector of %variance explained by PCA axes.
 }
 \description{
-\code{counts2PCA} Run principal component analysis on matrix of voom-normalized counts
+\code{counts2PCA} Run principal component analysis on matrix of
+voom-normalized counts
 }
 \details{
-This function uses the R function princomp to calculate principal components
+This function uses the R function princomp to calculate
+principal components
 }
 \examples{
 \dontrun{

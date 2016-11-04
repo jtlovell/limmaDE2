@@ -23,7 +23,8 @@
 #' }
 #'
 #' @export
-pqHists<-function(x, what.p="p.value",what.q="q.value",alpha=0.05,main="significance distribution",...){
+pqHists<-function(x, what.p="p.value",what.q="q.value",
+                  alpha=0.05,main="significance distribution",...){
   par(mfrow=c(1,2))
   hist(x[,grep(what.p, colnames(x))],
        xlab="p.value",

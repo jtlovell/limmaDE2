@@ -8,7 +8,8 @@ makeBinarySig(x, alpha = 0.05, what = "q.value", na.include = TRUE,
   verbose = TRUE)
 }
 \arguments{
-\item{x}{A dataframe or matrix containing the significance (p/q/fdr p) values to convert}
+\item{x}{A dataframe or matrix containing the significance (p/q/fdr p)
+values to convert}
 
 \item{alpha}{The threshold that defines what is and is not significance}
 
@@ -21,12 +22,13 @@ all rows with any NAs are dropped.}
 \item{verbose}{Logical, should the number of significant values be printed}
 }
 \value{
-a dataframe with all values in the original matrix with column names containing
-what, where the values have been transformed to binary
+a dataframe with all values in the original matrix with
+column names containing what, where the values have been
+transformed to binary
 }
 \description{
-\code{makeBinarySig} Convert some sort of significance distribution to binary
-signifcance calls.
+\code{makeBinarySig} Convert some sort of significance distribution
+to binary signifcance calls.
 }
 \details{
 Given a matrix with p/q values, this function greps for the string in

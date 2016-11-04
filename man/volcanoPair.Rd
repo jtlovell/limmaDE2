@@ -40,10 +40,12 @@ for both [1], just the y axis [2], just the x axis [3] or neighter.}
 a table with the number of significant effects
 }
 \description{
-\code{volcanoPair} Make an expression volcano plot from log2-fold change and p-value data
+\code{volcanoPair} Make an expression volcano plot
+from log2-fold change and p-value data
 }
 \details{
-Using base R graphics, this function tabulates the number of significant values and plots
+Using base R graphics, this function tabulates
+the number of significant values and plots
 }
 \examples{
 \dontrun{
@@ -51,7 +53,9 @@ data(kidney) #from the simseq package
 counts<-kidney$counts
 counts<-counts[sample(1:nrow(counts),1000),]
 info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment + rep", block=NULL, getTopTable=T, getEbayes=T)
+stats<-pipeLIMMA(counts=counts, info=info,
+                 formula = " ~ treatment + rep",
+                 block=NULL, getTopTable=T, getEbayes=T)
 stats<-stats$stats
 volcanoPair(lfc1=stats$treatmentTumor_logFC,
            lfc2=stats$rep6090_logFC,

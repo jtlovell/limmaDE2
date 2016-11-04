@@ -50,26 +50,39 @@
 #' data(kidney) # from simseq
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
-#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' }s
+#' info<-data.frame(rep=kidney$replic,
+#'                  treatment=kidney$treatment)
+#' stats<-pipeLIMMA(counts=counts,
+#'                  info=info,
+#'                  formula = " ~ treatment",
+#'                  block=info$rep)
+#' stats<-pipeLIMMA(counts=counts,
+#'                  info=info,
+#'                  formula = " ~ treatment",
+#'                  block=NULL)
+#' }
 #' @importFrom  edgeR calcNormFactors DGEList
 #' @importFrom  qvalue qvalue
 #' @export
-pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL,
-                    design=NULL, runVoom=TRUE, use.qualityWeights=TRUE,use.topTable=FALSE,
+pipeLIMMA<-function(counts, info, formula=NULL,
+                    contrast.matrix=NULL, block=NULL,
+                    design=NULL, runVoom=TRUE,
+                    use.qualityWeights=TRUE,use.topTable=FALSE,
                     geneIDs=NA, verbose=TRUE, plotVoom=FALSE, ...){
 
   extractTopTable<-function(fit, formula){
     n.effects<-nchar(formula)-nchar(gsub("+","",formula, fixed=T))+1
     effectNames<-sapply(1:n.effects, function(x) {
       out<-strsplit(formula,"[+]")[[1]][x]
-      out<-gsub(" ","",out, fixed=T); out<-gsub("~","",out, fixed=T); out<-gsub("*","_x_",out, fixed=T)
+      out<-gsub(" ","",out, fixed=T)
+      out<-gsub("~","",out, fixed=T)
+      out<-gsub("*","_x_",out, fixed=T)
       out})
-    maxTermInteraction<-max(sapply(effectNames, function(x) (nchar(x) - nchar(gsub("_x_","",x)))/3))
+    maxTermInteraction<-max(sapply(effectNames, function(x)
+      (nchar(x) - nchar(gsub("_x_","",x)))/3))
 
-    if(maxTermInteraction>1) stop("use.topTable is not possible with greater than a 2-way interaction")
+    if(maxTermInteraction>1)
+      stop("use.topTable is not possible with greater than a 2-way interaction")
     colids<-colnames(fit$p.value)
     colidInt<-colids[grep(":",colids)]
     colidMain<-colids[grep(":",colids, invert=T)]
@@ -135,12 +148,18 @@ pipeLIMMA<-function(counts, info, formula=NULL, contrast.matrix=NULL, block=NULL
     dupcor <- duplicateCorrelation(counts,design, block=as.factor(block))
     if(!is.null(contrast.matrix)){
       if(verbose) cat("fitting model to contrast matrix ... \n")
-      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
+      fit <- lmFit(v,
+                   design=design,
+                   correlation=dupcor$consensus,
+                   block=as.factor(block), ...)
       fit <- contrasts.fit(fit, contrast.matrix)
       fit <- eBayes(fit)
     }else{
       if(verbose) cat("fitting linear model ... \n")
-      fit <- lmFit(v, design=design, correlation=dupcor$consensus, block=as.factor(block), ...)
+      fit <- lmFit(v,
+                   design=design,
+                   correlation=dupcor$consensus,
+                   block=as.factor(block), ...)
       fit <- eBayes(fit[,-1])
     }
   }else{

@@ -1,7 +1,8 @@
 #' @title Scatter plot of log2 fold changes.
 #'
 #' @description
-#' \code{volcanoPair} Make an expression volcano plot from log2-fold change and p-value data
+#' \code{volcanoPair} Make an expression volcano plot
+#' from log2-fold change and p-value data
 #'
 #' @param lfc1 A vector of log-2 fold change (or similar data) for the x axis
 #' @param lfc2 A vector of log-2 fold change (or similar data) for the y axis
@@ -20,7 +21,8 @@
 #' @param legpos The position of the legend. Defaults to the top right.
 #' @param ... additional arguments passed on to plot
 #'
-#' @details Using base R graphics, this function tabulates the number of significant values and plots
+#' @details Using base R graphics, this function tabulates
+#' the number of significant values and plots
 
 #' @return a table with the number of significant effects
 #' @examples
@@ -29,7 +31,9 @@
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment + rep", block=NULL, getTopTable=T, getEbayes=T)
+#' stats<-pipeLIMMA(counts=counts, info=info,
+#'                  formula = " ~ treatment + rep",
+#'                  block=NULL, getTopTable=T, getEbayes=T)
 #' stats<-stats$stats
 #' volcanoPair(lfc1=stats$treatmentTumor_logFC,
 #'            lfc2=stats$rep6090_logFC,

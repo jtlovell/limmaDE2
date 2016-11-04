@@ -1,6 +1,5 @@
 #' @title Make venn diagrams based on significance classification
 #'
-#'
 #' @description
 #' \code{counts2Venn} Take a binary significance classification matrix and
 #' produce two types of venn diagrams.
@@ -37,24 +36,28 @@
 #' }
 #' @importFrom  venneuler venneuler
 #' @export
-counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0,...){
+counts2Venn<-function(x, cols, names, colors="black",
+                      type="both",legx=0, legy=0,...){
   if(type == "Euler"){
 
     mat<-as.matrix(x[,cols])
     colnames(mat)<-names
     cs<-apply(mat,2, function(x) sum(x!=0))
-    c2<-lapply(data.frame(combn(colnames(mat),m=2)),function(x) as.vector(x))
+    c2<-lapply(data.frame(combn(colnames(mat),m=2)),
+               function(x) as.vector(x))
     if(length(names)>1){
       cs2<-sapply(c2, function(x) {
         temp<-mat[,x]
         sum(temp[,1]!=0 & temp[,2]!=0)
       })
-      names(cs2)<-sapply(c2, function(x) paste(x, collapse="_"))
+      names(cs2)<-sapply(c2,
+                         function(x) paste(x, collapse="_"))
     }else{
       cs2<-""
     }
     if(length(names)>2){
-      c3<-lapply(data.frame(combn(colnames(mat),m=3)),function(x) as.vector(x))
+      c3<-lapply(data.frame(combn(colnames(mat),m=3)),
+                 function(x) as.vector(x))
       cs3<-sapply(c3, function(x) {
         temp<-mat[,x]
         sum(temp[,1]!=0 & temp[,2]!=0 & temp[,3]!=0)
@@ -64,7 +67,8 @@ counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0
       cs3<-""
     }
     if(length(names)>3){
-      c4<-lapply(data.frame(combn(colnames(mat),m=4)),function(x) as.vector(x))
+      c4<-lapply(data.frame(combn(colnames(mat),m=4)),
+                 function(x) as.vector(x))
       cs4<-sapply(c4, function(x) {
         temp<-mat[,x]
         sum(temp[,1]!=0 & temp[,2]!=0 & temp[,3]!=0 & temp[,4]!=0)
@@ -85,7 +89,8 @@ counts2Venn<-function(x, cols, names, colors="black", type="both",legx=0, legy=0
     if(length(names)>1){
       areas<-sqrt(colSums(x[,cols])/pi)
       areas<-areas/(max(areas)*.25)
-      legend("bottomleft", legend=colSums(x[,cols]), col=colors, pt.cex=areas, pch=1, bty="n",
+      legend("bottomleft", legend=colSums(x[,cols]),
+             col=colors, pt.cex=areas, pch=1, bty="n",
              cex=.5, inset=c(.05,.05))
     }
   }
