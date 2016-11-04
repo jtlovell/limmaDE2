@@ -46,12 +46,14 @@
 ##' }
 ##'
 #' @examples
-#' data(kidney)
+#' \dontrun{
+#' data(kidney) # from simseq
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=info$rep)
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
+#' }s
 #' @importFrom  edgeR calcNormFactors DGEList
 #' @importFrom  qvalue qvalue
 #' @export

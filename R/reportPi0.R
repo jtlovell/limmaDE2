@@ -1,11 +1,10 @@
 #' @title Get pi0 from P-values
 #'
-#'
 #' @description
 #' \code{reportPi0} Calculate pi0 from p-values using the qvalue package
 #'
 #' @param ps a vector, data.frame or matrix of pvalues
-
+#'
 #' @return a vector (if is.numeric(ps)) or a matrix of pi0 and the number of affected elements
 #'
 #' @examples

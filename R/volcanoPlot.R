@@ -22,16 +22,18 @@
 
 #' @return a table with the number and direction of significance
 #' @examples
-#' data(kidney)
+#' \dontrun{
+#' data(kidney) #from the simseq package
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
 #' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL, getTopTable=T, getEbayes=T)
-#' ### Not Run ### stats<-stats$stats
-#' ### Not Run ### volcanoPlot(pval=stats$ebayesPvalue_treatmentTumor,
-#' ### Not Run ###             lfc=stats$treatmentTumor_logFC,
-#' ### Not Run ###             sig=stats$ebayesQvalue_treatmentTumor,
-#' ### Not Run ###             alpha=0.0005, pointcols=c("blue","grey"), pchs=c(4,6))
+#' stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL, getTopTable=T, getEbayes=T)
+#' stats<-stats$stats
+#' volcanoPlot(pval=stats$ebayesPvalue_treatmentTumor,
+#'             lfc=stats$treatmentTumor_logFC,
+#'             sig=stats$ebayesQvalue_treatmentTumor,
+#'             alpha=0.0005, pointcols=c("blue","grey"), pchs=c(4,6))
+#' }
 #' @export
 volcanoPlot<-function(pval, lfc, sig, alpha=0.05,
                       pointcols=c(rgb(1,0,0,.5),rgb(0,0,0,.5)),

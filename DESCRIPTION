@@ -10,20 +10,7 @@ License: GPL-3
 LazyData: TRUE
 Depends:
     limma,
-    SimSeq,
-    plyr,
-    vegan
-Imports:
-    ggplot2,
-    edgeR,
-    venneuler,
     qvalue,
-    qdap,
-    reshape2,
-    dendroextras,
-    Heatplus,
-    gdata,
-    topGO,
-    RColorBrewer,
-    PhyGenomicsData.PV2016
+    edgeR,
+    venneuler
 RoxygenNote: 5.0.1

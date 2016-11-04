@@ -2,9 +2,9 @@
 #'
 #'
 #' @description
-#' \code{voom2PCA} Run principal component analysis on matrix of voom-normalized counts
+#' \code{counts2PCA} Run principal component analysis on matrix of voom-normalized counts
 #'
-#' @param v Counts matrix, typically transformed by limma::voom.
+#' @param counts Counts matrix, typically transformed by limma::voom.
 #' Possibly output from pipelimma, in the slot "voom".
 #' @param info The experimental design information matrix
 #' @param ids A vector of the individual names
@@ -16,18 +16,28 @@
 #' @return a list containing a dataframe with the experimental design data, merged with the 1st
 #' 3 principal component axes and a vector of %variance explained by PCA axes.
 #' @examples
-#' data(kidney)
+#' \dontrun{
+#' data(kidney) #from the simseq package
 #' counts<-kidney$counts
 #' counts<-counts[sample(1:nrow(counts),1000),]
-#' info<-data.frame(rep=kidney$replic, treatment=kidney$treatment)
-#' ### Not Run ### stats<-pipeLIMMA(counts=counts, info=info, formula = " ~ treatment", block=NULL)
-#' ### Not Run ### pc <- voom2PCA(v=stats$voom[["E"]], info=info, ids=rownames(info),plotit=TRUE)
-#' ### Not Run ### library(ggplot2)
-#' ### Not Run ### ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+geom_point()
+#' info<-data.frame(rep=kidney$replic,
+#'                  treatment=kidney$treatment)
+#' stats<-pipeLIMMA(counts=counts,
+#'                  info=info,
+#'                  formula = " ~ treatment",
+#'                  block=NULL)
+#' pc <- voom2PCA(counts=stats$voom[["E"]],
+#'                info=info,
+#'                ids=rownames(info),
+#'                plotit=TRUE)
+#' library(ggplot2)
+#' ggplot(pc, aes(x=PC1, y=PC2, col=treatment))+
+#'    geom_point()
+#' }
 #' @export
-voom2PCA<-function(v, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...){
+counts2PCA<-function(counts, info, ids, plotit=TRUE,pcas2return=3,plot.cols="black",...){
 
-  pc<-prcomp(t(v))
+  pc<-prcomp(t(counts))
   prop.var<-round(((pc$sdev)^2 / sum(pc$sdev^2))*100,1)
   dat<-data.frame(info, pc$x[,1:pcas2return])
   if(plotit){
