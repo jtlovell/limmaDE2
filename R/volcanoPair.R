@@ -59,7 +59,7 @@ volcanoPair<-function(lfc1, lfc2,
   if(sum(c(length(pt.col),length(pt.pch),length(pt.cex)))>1){
     if(any(all(length(pt.col) > 1, length(pt.pch) > 1),
            all(length(pt.col) > 1, length(pt.cex) > 1))){
-      totab<-pt.col
+      tab<-table(pt.col)
     }else{
       if(length(pt.col)>1) {
         tab<-table(pt.col)
