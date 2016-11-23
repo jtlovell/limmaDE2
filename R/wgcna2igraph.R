@@ -69,12 +69,12 @@ wgcna2igraph<-function(net, datExpr,
                        node.size = 0, frame.color = NA, node.color = NA,
                        edge.alpha = .5, edge.width =1, returnNet=TRUE,...){
 
-  if(!returnNet){
+  if(!returnNet & is.null(modules2plot)){
     modules2plot = unique(net[[1]])
     colors2plot = unique(net[[1]])
   }
 
-  if(length(colors2plot) != length(modules2plot))
+  if(returnNet & length(colors2plot) != length(modules2plot))
     stop("colors2plot and modules2plot must have the same number of elements\n")
 
   if(!any(sapply(modules2plot, function(x) x %in% unique(net[[1]]))))
@@ -106,7 +106,7 @@ wgcna2igraph<-function(net, datExpr,
     datExpr = datExpr[,gs]
   }
 
-  if(verbose) cat("subsetting to modules:", paste(modules2plot, collapse = ", "),"\n")
+  if(verbose & returnNet) cat("subsetting to modules:", paste(modules2plot, collapse = ", "),"\n")
   datExpr<-datExpr[,cols %in% modules2plot]
   cols<-cols[cols %in% modules2plot]
   gs<-gs[cols %in% modules2plot]

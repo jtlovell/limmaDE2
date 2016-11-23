@@ -28,7 +28,7 @@ pipeTopGO<-function(genes.of.interest,
                     GO.db.sep = ",",
                     cull2genes = NULL,
                     output = "culled"){
-  if(GO.db.colname %in% colnames(GO.db))
+  if(!GO.db.colname %in% colnames(GO.db))
     stop("GO.db.colname must be a column name in GO.db\n")
 
   if(!requireNamespace("topGO", quietly = TRUE)){
@@ -36,9 +36,9 @@ pipeTopGO<-function(genes.of.interest,
   }else{
     require("topGO", quietly = TRUE)
   }
-
+  ids<-GO.db[,GO.db.geneIDs]
   GO.db<-lapply(1:nrow(GO.db), function(x) strsplit(GO.db[,GO.db.colname][x],GO.db.sep)[[1]])
-  names(GO.db)<-GO.db[,GO.db.geneIDs]
+  names(GO.db)<-ids
   nas<-sapply(GO.db, function(x) is.na(x[1]))
   GO.db<-GO.db[!nas]
   geneID2GO = GO.db
