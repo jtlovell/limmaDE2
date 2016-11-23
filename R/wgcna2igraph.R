@@ -18,6 +18,8 @@
 #' @param node.color If node.size > 0, can specify the color for nodes
 #' @param edge.alpha Numeric [0-1] specifying the transparency of the edges
 #' @param verbose The position of the legend. Defaults to the top right.
+#' @param returnNet Should the network be returned? If FALSE, a list of the
+#' genes and original module colors that were input is returned.
 #' @param ... additional arguments passed on WGCNA::adjacency
 #'
 #' @details More here soon.
@@ -65,7 +67,7 @@ wgcna2igraph<-function(net, datExpr,
          kME.threshold = .75, adjacency.threshold = 0.1,
          adj.power = 6, verbose = T,
          node.size = 0, frame.color = NA, node.color = NA,
-         edge.alpha = .5, edge.width =1){
+         edge.alpha = .5, edge.width =1, returnNet=TRUE){
 
   if(length(colors2plot) != length(modules2plot))
     stop("colors2plot and modules2plot must have the same number of elements\n")
@@ -112,8 +114,6 @@ wgcna2igraph<-function(net, datExpr,
 
   if(verbose) cat("removing unconnected nodes\n")
   adj_mat<-adj_mat[rs>1,rs>1]
-
-
   if(verbose) cat("coverting to igraph format\n")
   graph.colors = sapply(cols, function(x) colors2plot[modules2plot == x])
   net <- graph_from_adjacency_matrix(adj_mat, weighted=TRUE,
@@ -148,5 +148,10 @@ wgcna2igraph<-function(net, datExpr,
   V(net)$color <- node.color
   E(net)$arrow.mode <- 0
   if(verbose) cat("returning a network with",length(V(net)$size),"nodes and",length(E(net)$color),"edges\n")
-  return(net)
+  if(returnNet){
+    return(net)
+  }else{
+    return(list(genes = colnames(adj_mat), cols = cols[colnames(adj_mat)]))
+  }
+
 }
