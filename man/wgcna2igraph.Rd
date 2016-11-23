@@ -6,7 +6,8 @@
 \usage{
 wgcna2igraph(net, datExpr, modules2plot, colors2plot, kME.threshold = 0.75,
   adjacency.threshold = 0.1, adj.power = 6, verbose = T, node.size = 0,
-  frame.color = NA, node.color = NA, edge.alpha = 0.5, edge.width = 1)
+  frame.color = NA, node.color = NA, edge.alpha = 0.5, edge.width = 1,
+  returnNet = TRUE)
 }
 \arguments{
 \item{net}{WGCNA generated network. Usually from WGCNA::blockwiseModules}
@@ -35,6 +36,9 @@ modules2plot.}
 \item{node.color}{If node.size > 0, can specify the color for nodes}
 
 \item{edge.alpha}{Numeric [0-1] specifying the transparency of the edges}
+
+\item{returnNet}{Should the network be returned? If FALSE, a list of the
+genes and original module colors that were input is returned.}
 
 \item{...}{additional arguments passed on WGCNA::adjacency}
 }
