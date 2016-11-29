@@ -26,6 +26,7 @@ pipeTopGO<-function(genes.of.interest,
                     GO.db.colname,
                     GO.db.geneIDs,
                     GO.db.sep = ",",
+                    min.n.annot = 0,
                     cull2genes = NULL,
                     output = "culled"){
   if(!GO.db.colname %in% colnames(GO.db))
@@ -41,6 +42,12 @@ pipeTopGO<-function(genes.of.interest,
   names(GO.db)<-ids
   nas<-sapply(GO.db, function(x) is.na(x[1]))
   GO.db<-GO.db[!nas]
+  if(min.n.annot>0){
+    tab<-table(unlist(GO.db))
+    go2drop<-names(tab)[tab<min.n.annot]
+    GO.db<-lapply(GO.db, function(x) x[!x %in% go2drop])
+  }
+  
   geneID2GO = GO.db
   if(!is.null(cull2genes)){
     geneID2GO<-geneID2GO[cull2genes]

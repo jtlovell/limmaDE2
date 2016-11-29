@@ -2,6 +2,7 @@
 
 export(counts2PCA)
 export(counts2Venn)
+export(distGO)
 export(makeBinarySig)
 export(means4heatmap)
 export(modulesByConnectivity)

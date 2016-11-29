@@ -62,10 +62,10 @@
 #' }
 #'
 #' @export
-wgcna2igraph<-function(net, datExpr,
+wgcna2igraph<-function(net, datExpr, top.n.edges = NA,
                        modules2plot = NULL, colors2plot = NULL,
                        kME.threshold = .75, adjacency.threshold = 0.1,
-                       adj.power = 6, verbose = T,
+                       adj.power = 6, verbose = T,min.edge=2,
                        node.size = 0, frame.color = NA, node.color = NA,
                        edge.alpha = .5, edge.width =1, returnNet=TRUE,...){
 
@@ -113,12 +113,17 @@ wgcna2igraph<-function(net, datExpr,
 
   if(verbose) cat("culling edges by adjacency\n")
   adj_mat<-adjacency(datExpr,power=6, ...)
+  if(!is.na(top.n.edges)){
+    adjacency.threshold = sort(as.numeric(adj_mat), decreasing=T)[(top.n.edges*2)+nrow(adj_mat)]
+  }
   adj_mat[adj_mat > adjacency.threshold] <- 1
   adj_mat[adj_mat < adjacency.threshold] <- 0
   diag(adj_mat) <- 0
   rs<-rowSums(adj_mat)
   if(verbose) cat("removing unconnected nodes\n")
-  adj_mat<-adj_mat[rs>1,rs>1]
+  adj_mat<-adj_mat[rs>min.edge,rs>min.edge]
+
+
   if(!returnNet){
     return(list(genes = colnames(adj_mat), cols = cols[colnames(adj_mat)]))
   }else{

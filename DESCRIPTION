@@ -11,10 +11,10 @@ LazyData: TRUE
 Depends:
     limma,
     qvalue,
-    edgeR,
-    venneuler
+    edgeR
 Suggests:
     knitr,
-    DESeq2
+    DESeq2,
+    venneuler
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
