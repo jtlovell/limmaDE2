@@ -4,10 +4,11 @@
 \alias{wgcna2igraph}
 \title{Generate an igraph object from wgcna output}
 \usage{
-wgcna2igraph(net, datExpr, modules2plot = NULL, colors2plot = NULL,
-  kME.threshold = 0.75, adjacency.threshold = 0.1, adj.power = 6,
-  verbose = T, node.size = 0, frame.color = NA, node.color = NA,
-  edge.alpha = 0.5, edge.width = 1, returnNet = TRUE, ...)
+wgcna2igraph(net, datExpr, top.n.edges = NA, modules2plot = NULL,
+  colors2plot = NULL, kME.threshold = 0.75, adjacency.threshold = 0.1,
+  adj.power = 6, verbose = T, min.edge = 2, node.size = 0,
+  frame.color = NA, node.color = NA, edge.alpha = 0.5, edge.width = 1,
+  returnNet = TRUE, ...)
 }
 \arguments{
 \item{net}{WGCNA generated network. Usually from WGCNA::blockwiseModules}
