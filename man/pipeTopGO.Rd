@@ -5,7 +5,8 @@
 \title{Run gene ontology enrichment analyses}
 \usage{
 pipeTopGO(genes.of.interest, GO.db, GO.db.colname, GO.db.geneIDs,
-  GO.db.sep = ",", cull2genes = NULL, output = "culled")
+  GO.db.sep = ",", min.n.annot = 0, cull2genes = NULL,
+  output = "culled")
 }
 \arguments{
 \item{genes.of.interest}{A character vector representing the genes that are
